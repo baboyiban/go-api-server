@@ -37,11 +37,11 @@ func InitDB() *gorm.DB {
 
 	err = db.AutoMigrate(
 		&models.Zone{},
-		// &models.Delivery{},
-		// &models.Vehicle{},
-		// &models.OperationRecord{},
-		// &models.OperationDelivery{},
-		// &models.Employee{},
+		&models.Delivery{},
+		&models.Vehicle{},
+		&models.OperationRecord{},
+		&models.OperationDelivery{},
+		&models.Employee{},
 	)
 	if err != nil {
 		log.Fatalf("데이터베이스 마이그레이션 실패: %v", err)

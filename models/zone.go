@@ -2,12 +2,9 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Zone struct {
-	gorm.Model
 	ZoneID                 string     `gorm:"column:구역_ID;type:char(3);primaryKey"`
 	ZoneName               string     `gorm:"column:구역_명;type:varchar(50)"`
 	CoordinateX            int        `gorm:"column:좌표_X;type:int"`
