@@ -8,7 +8,7 @@ type TripLog struct {
 	Vehicle   Vehicle    `json:"-" gorm:"foreignKey:VehicleID;references:VehicleID"`
 	StartTime *time.Time `json:"start_time" gorm:"column:start_time;type:datetime"`
 	EndTime   *time.Time `json:"end_time" gorm:"column:end_time;type:datetime"`
-	Status    string     `json:"status" gorm:"column:status;type:enum('in_transit','idle');not null;default:'idle'"`
+	Status    string     `json:"status" gorm:"column:status;type:enum('운송중','비운송중');not null;default:'비운송중'"`
 }
 
 func (TripLog) TableName() string {
