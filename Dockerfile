@@ -1,5 +1,5 @@
 # 빌드 단계
-FROM golang:1.24-bookworm as builder
+FROM golang:1.24-bookworm AS builder
 
 WORKDIR /app
 COPY . .

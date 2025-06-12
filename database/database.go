@@ -35,17 +35,37 @@ func InitDB() *gorm.DB {
 		log.Fatalf("데이터베이스 연결 실패: %v", err)
 	}
 
-	err = db.AutoMigrate(
-		&models.Zone{},
-		&models.Delivery{},
-		&models.Vehicle{},
-		&models.OperationRecord{},
-		&models.OperationDelivery{},
-		&models.Employee{},
-	)
-	if err != nil {
+	if err = runMigrations(db); err != nil {
 		log.Fatalf("데이터베이스 마이그레이션 실패: %v", err)
 	}
-	log.Println("데이터베이스 연결 및 마이그레이션 성공")
+
+	log.Println("데이터베이스 연결 및 마이그레이션 완료")
 	return db
+}
+
+// TableMigration 테이블 마이그레이션 정보를 담는 구조체
+type TableMigration struct {
+	Model interface{}
+	Name  string
+}
+
+func runMigrations(db *gorm.DB) error {
+	tables := []TableMigration{
+		{&models.Region{}, "Region"},
+		{&models.Vehicle{}, "Vehicle"},
+		{&models.Employee{}, "Employee"},
+		{&models.Package{}, "Package"},
+		{&models.TripLog{}, "TripLog"},
+		{&models.DeliveryLog{}, "DeliveryLog"},
+	}
+
+	for _, table := range tables {
+		log.Printf("'%s' 테이블 마이그레이션 중...", table.Name)
+		if err := db.AutoMigrate(table.Model); err != nil {
+			return fmt.Errorf("%s 테이블 마이그레이션 실패: %w", table.Name, err)
+		}
+		log.Printf("'%s' 테이블 마이그레이션 완료", table.Name)
+	}
+
+	return nil
 }

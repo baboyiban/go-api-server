@@ -1,16 +1,16 @@
 package models
 
 type Vehicle struct {
-	InternalID          int    `gorm:"column:내부_ID;type:int;primaryKey;autoIncrement"`
-	VehicleID           string `gorm:"column:차량_ID;type:varchar(15);unique"`
-	CurrentLoadQuantity int    `gorm:"column:현재_적재_수량;type:int;default:0"`
-	MaxLoadQuantity     int    `gorm:"column:최대_적재_수량;type:int;default:5"`
-	LEDStatus           string `gorm:"column:LED_상태;type:enum('초록','노랑','빨강');default:'초록'"`
-	ConfirmRequired     bool   `gorm:"column:담당_확인_필요;type:boolean;default:false"`
-	CurrentCoordinateX  int    `gorm:"column:현재_좌표_X;type:int"`
-	CurrentCoordinateY  int    `gorm:"column:현재_좌표_Y;type:int"`
+	InternalID        int    `json:"internal_id" gorm:"column:internal_id;type:int;primaryKey;autoIncrement"`
+	VehicleID         string `json:"vehicle_id" gorm:"column:vehicle_id;type:varchar(15);unique"`
+	CurrentLoad       int    `json:"current_load" gorm:"column:current_load;type:int;not null;default:0"`
+	MaxLoad           int    `json:"max_load" gorm:"column:max_load;type:int;not null;default:5"`
+	LedStatus         string `json:"led_status" gorm:"column:led_status;type:varchar(10)"`
+	NeedsConfirmation bool   `json:"needs_confirmation" gorm:"column:needs_confirmation;type:boolean;not null;default:false"`
+	CoordX            int    `json:"coord_x" gorm:"column:coord_x;type:int"`
+	CoordY            int    `json:"coord_y" gorm:"column:coord_y;type:int"`
 }
 
 func (Vehicle) TableName() string {
-	return "차량"
+	return "vehicle"
 }

@@ -1,13 +1,12 @@
 package models
 
 type Employee struct {
-	EmployeeID int    `gorm:"column:직원_ID;type:int;primaryKey;autoIncrement"`
-	Name       string `gorm:"column:이름;type:varchar(10)"`
-	Password   string `gorm:"column:비밀번호;type:varchar(50)"`
-	Position   string `gorm:"column:직책;type:enum('Manager','Transportation')"`
-	Active     bool   `gorm:"column:활성여부;type:boolean;default:true"`
+	EmployeeID int    `json:"employee_id" gorm:"column:employee_id;type:int;primaryKey;autoIncrement"`
+	Password   string `json:"password" gorm:"column:password;type:varchar(50);not null"`
+	Position   string `json:"position" gorm:"column:position;type:enum('manager','driver');not null"`
+	IsActive   bool   `json:"is_active" gorm:"column:is_active;type:boolean;not null;default:true"`
 }
 
 func (Employee) TableName() string {
-	return "직원"
+	return "employee"
 }

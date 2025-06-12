@@ -15,31 +15,31 @@ func main() {
 	router := gin.Default()
 	api := router.Group("/api")
 	{
-		// Zone
-		api.POST("/zones", handlers.CreateHandler[models.Zone](db))
-		api.GET("/zones", handlers.GetAllHandler[models.Zone](db))
-		api.PUT("/zones/:id", handlers.UpdateHandler[models.Zone](db))
-		api.DELETE("/zones/:id", handlers.DeleteHandler[models.Zone](db))
-		// Delivery
-		api.POST("/deliverys", handlers.CreateHandler[models.Delivery](db))
-		api.GET("/deliverys", handlers.GetAllHandler[models.Delivery](db))
-		api.PUT("/deliverys/:id", handlers.UpdateHandler[models.Delivery](db))
-		api.DELETE("/deliverys/:id", handlers.DeleteHandler[models.Delivery](db))
+		// Region
+		api.POST("/region", handlers.CreateHandler[models.Region](db))
+		api.GET("/region", handlers.GetAllHandler[models.Region](db))
+		api.PUT("/region/:id", handlers.UpdateHandler[models.Region](db))
+		api.DELETE("/region/:id", handlers.DeleteHandler[models.Region](db))
+		// Package
+		api.POST("/package", handlers.CreateHandler[models.Package](db))
+		api.GET("/package", handlers.GetAllHandler[models.Package](db))
+		api.PUT("/package/:id", handlers.UpdateHandler[models.Package](db))
+		api.DELETE("/package/:id", handlers.DeleteHandler[models.Package](db))
 		// Vehicle
-		api.POST("/vehicles", handlers.CreateHandler[models.Vehicle](db))
-		api.GET("/vehicles", handlers.GetAllHandler[models.Vehicle](db))
-		api.PUT("/vehicles/:id", handlers.UpdateHandler[models.Vehicle](db))
-		api.DELETE("/vehicles/:id", handlers.DeleteHandler[models.Vehicle](db))
-		// OperationRecord
-		api.POST("/operation_records", handlers.CreateHandler[models.OperationRecord](db))
-		api.GET("/operation_records", handlers.GetAllHandler[models.OperationRecord](db))
-		api.PUT("/operation_records/:id", handlers.UpdateHandler[models.OperationRecord](db))
-		api.DELETE("/operation_records/:id", handlers.DeleteHandler[models.OperationRecord](db))
-		// OperationDelivery
-		api.POST("/operation_Deliverys", handlers.CreateHandler[models.OperationDelivery](db))
-		api.GET("/operation_Deliverys", handlers.GetAllHandler[models.OperationDelivery](db))
-		api.PUT("/operation_Deliverys/:id", handlers.UpdateHandler[models.OperationDelivery](db))
-		api.DELETE("/operation_Deliverys/:id", handlers.DeleteHandler[models.OperationDelivery](db))
+		api.POST("/vehicle", handlers.CreateHandler[models.Vehicle](db))
+		api.GET("/vehicle", handlers.GetAllHandler[models.Vehicle](db))
+		api.PUT("/vehicle/:id", handlers.UpdateHandler[models.Vehicle](db))
+		api.DELETE("/vehicle/:id", handlers.DeleteHandler[models.Vehicle](db))
+		// TripLog
+		api.POST("/trip_log", handlers.CreateHandler[models.TripLog](db))
+		api.GET("/trip_log", handlers.GetAllHandler[models.TripLog](db))
+		api.PUT("/trip_log/:id", handlers.UpdateHandler[models.TripLog](db))
+		api.DELETE("/trip_log/:id", handlers.DeleteHandler[models.TripLog](db))
+		// DeliveryLog
+		api.POST("/delivery_log", handlers.CreateHandler[models.DeliveryLog](db))
+		api.GET("/delivery_log", handlers.GetAllHandler[models.DeliveryLog](db))
+		api.PUT("/delivery_log/:id", handlers.UpdateHandler[models.DeliveryLog](db))
+		api.DELETE("/delivery_log/:id", handlers.DeleteHandler[models.DeliveryLog](db))
 	}
 
 	port := ":" + database.LookupEnv("API_PORT", "")
