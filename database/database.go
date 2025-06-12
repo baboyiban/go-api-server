@@ -12,60 +12,52 @@ import (
 )
 
 func getDSN() string {
-	user := LookupEnv("DB_USER", "root")
-	pass := LookupEnv("DB_PASSWORD", "password")
-	host := LookupEnv("DB_HOST", "127.0.0.1")
-	port := LookupEnv("DB_PORT", "3306")
-	name := LookupEnv("DB_NAME", "my_database")
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		user, pass, host, port, name)
-}
-
-func LookupEnv(key, fallback string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
+	getEnv := func(key, fallback string) string {
+		if v, ok := os.LookupEnv(key); ok {
+			return v
+		}
+		return fallback
 	}
-	return fallback
+
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		getEnv("DB_USER", "root"),
+		getEnv("DB_PASSWORD", "password"),
+		getEnv("DB_HOST", "127.0.0.1"),
+		getEnv("DB_PORT", "3306"),
+		getEnv("DB_NAME", "my_database"),
+	)
 }
 
 func InitDB() *gorm.DB {
-	dsn := getDSN()
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(getDSN()), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("데이터베이스 연결 실패: %v", err)
+		log.Fatalf("DB 연결 실패: %v", err)
 	}
 
-	if err = runMigrations(db); err != nil {
-		log.Fatalf("데이터베이스 마이그레이션 실패: %v", err)
-	}
+	// 필요할 때만 마이그레이션 수행
+	// autoMigrateAll(db)
 
-	log.Println("데이터베이스 연결 및 마이그레이션 완료")
+	log.Println("DB 연결 완료")
 	return db
 }
 
-// TableMigration 테이블 마이그레이션 정보를 담는 구조체
-type TableMigration struct {
-	Model interface{}
-	Name  string
-}
-
-func runMigrations(db *gorm.DB) error {
-	tables := []TableMigration{
-		{&models.Region{}, "Region"},
-		{&models.Vehicle{}, "Vehicle"},
-		{&models.Employee{}, "Employee"},
-		{&models.Package{}, "Package"},
-		{&models.TripLog{}, "TripLog"},
-		{&models.DeliveryLog{}, "DeliveryLog"},
+// autoMigrateAll 모든 모델에 대해 자동 마이그레이션 수행
+func autoMigrateAll(db *gorm.DB) {
+	modelsToMigrate := []interface{}{
+		&models.Region{},
+		&models.Vehicle{},
+		&models.Employee{},
+		&models.Package{},
+		&models.TripLog{},
+		&models.DeliveryLog{},
 	}
 
-	for _, table := range tables {
-		log.Printf("'%s' 테이블 마이그레이션 중...", table.Name)
-		if err := db.AutoMigrate(table.Model); err != nil {
-			return fmt.Errorf("%s 테이블 마이그레이션 실패: %w", table.Name, err)
+	for _, m := range modelsToMigrate {
+		name := fmt.Sprintf("%T", m)
+		log.Printf("마이그레이션 시작: %s", name)
+		if err := db.AutoMigrate(m); err != nil {
+			log.Fatalf("마이그레이션 실패: %s, 에러: %v", name, err)
 		}
-		log.Printf("'%s' 테이블 마이그레이션 완료", table.Name)
+		log.Printf("마이그레이션 완료: %s", name)
 	}
-
-	return nil
 }
