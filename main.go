@@ -13,6 +13,10 @@ import (
 )
 
 func main() {
+	// 환경변수에서 GIN_MODE 읽어서 없으면 default는 debug 모드
+	mode := getEnv("GIN_MODE", gin.DebugMode)
+	gin.SetMode(mode)
+
 	db := database.InitDB()
 	router := gin.Default()
 	api := router.Group("/api")
