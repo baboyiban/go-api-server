@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/baboyiban/go-api-server/models"
@@ -40,25 +41,22 @@ func GetByIDHandler[T any](db *gorm.DB, idField string) gin.HandlerFunc {
 // 각 필드 조회
 func GetByField[T any](db *gorm.DB, validFields map[string]bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 1. 쿼리 파라미터 추출 (예: /api/region?region_id=1&region_name=서울)
+		// 1. 쿼리 파라미터 추출 (필터 조건)
 		queryParams := c.Request.URL.Query()
-		if len(queryParams) == 0 {
-			c.AbortWithStatusJSON(400, gin.H{"error": "No search parameters provided"})
-			return
-		}
-
-		// 2. 유효한 필드만 필터링
 		validParams := make(map[string]string)
 		for field, values := range queryParams {
+			if field == "sort" {
+				continue // 정렬 파라미터는 별도 처리
+			}
 			if !validFields[field] {
-				continue // 무시할 필드
+				continue // 유효하지 않은 필드는 무시
 			}
 			if len(values) > 0 {
-				validParams[field] = values[0] // 첫 번째 값만 사용
+				validParams[field] = values[0]
 			}
 		}
 
-		// 3. 시간 필드 파싱
+		// 2. 시간 필드 파싱
 		timeFields := map[string]bool{
 			"completion_at":         true,
 			"first_transport_time":  true,
@@ -70,12 +68,12 @@ func GetByField[T any](db *gorm.DB, validFields map[string]bool) gin.HandlerFunc
 			"start_time":            true,
 			"end_time":              true,
 		}
-		parsedParams := make(map[string]interface{})
+		parsedParams := make(map[string]any)
 		for field, value := range validParams {
 			if timeFields[field] {
 				t, err := time.Parse(time.RFC3339, value)
 				if err != nil {
-					c.AbortWithStatusJSON(400, gin.H{"error": fmt.Sprintf("Invalid time format for field %s", field)})
+					c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid time format for field %s", field)})
 					return
 				}
 				parsedParams[field] = t
@@ -84,19 +82,34 @@ func GetByField[T any](db *gorm.DB, validFields map[string]bool) gin.HandlerFunc
 			}
 		}
 
-		// 4. 동적 쿼리 빌드 (AND 조건)
+		// 3. 쿼리 빌드 (필터 조건 적용)
 		var results []T
 		query := db.Model(&results)
 		for field, value := range parsedParams {
 			query = query.Where(fmt.Sprintf("%s = ?", field), value)
 		}
 
+		// 4. 정렬 조건 적용 (예: sort=-registered_at -> registered_at DESC)
+		if sortParam := c.Query("sort"); sortParam != "" {
+			sortField := sortParam
+			order := "ASC"
+			if sortParam[0] == '-' {
+				sortField = sortParam[1:]
+				order = "DESC"
+			}
+			if !validFields[sortField] {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid sort field: %s", sortField)})
+				return
+			}
+			query = query.Order(fmt.Sprintf("%s %s", sortField, order))
+		}
+
 		// 5. 결과 반환
 		if err := query.Find(&results).Error; err != nil {
-			c.AbortWithStatusJSON(500, gin.H{"error": "Database query failed"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Database query failed"})
 			return
 		}
-		c.JSON(200, results)
+		c.JSON(http.StatusOK, results)
 	}
 }
 
