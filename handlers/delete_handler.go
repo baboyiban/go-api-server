@@ -37,7 +37,7 @@ func RegisterDeleteHandlers(router *gin.Engine, db *gorm.DB) {
 	// 모델별 ID 필드명 지정
 	router.DELETE("/api/region/:id", DeleteHandler[models.Region](db, "region_id"))
 	router.DELETE("/api/package/:id", DeleteHandler[models.Package](db, "package_id"))
-	router.DELETE("/api/vehicle/:id", DeleteHandler[models.Vehicle](db, "vehicle_id"))
+	router.DELETE("/api/vehicle/:id", DeleteHandler[models.Vehicle](db, "interal_id"))
 	router.DELETE("/api/trip_log/:id", DeleteHandler[models.TripLog](db, "trip_id"))
 	router.DELETE("/api/delivery_log/:id", DeleteHandler[models.DeliveryLog](db, "trip_id"))
 	router.DELETE("/api/employee/:id", DeleteHandler[models.Employee](db, "employee_id"))

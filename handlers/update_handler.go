@@ -41,7 +41,7 @@ func RegisterUpdateHandlers(router *gin.Engine, db *gorm.DB) {
 	// 모델별 ID 필드명 지정
 	router.PUT("/api/region/:id", UpdateHandler[models.Region](db, "region_id"))
 	router.PUT("/api/package/:id", UpdateHandler[models.Package](db, "package_id"))
-	router.PUT("/api/vehicle/:id", UpdateHandler[models.Vehicle](db, "vehicle_id"))
+	router.PUT("/api/vehicle/:id", UpdateHandler[models.Vehicle](db, "internal_id"))
 	router.PUT("/api/trip_log/:id", UpdateHandler[models.TripLog](db, "trip_id"))
 	router.PUT("/api/delivery_log/:id", UpdateHandler[models.DeliveryLog](db, "trip_id"))
 	router.PUT("/api/employee/:id", UpdateHandler[models.Employee](db, "employee_id"))
