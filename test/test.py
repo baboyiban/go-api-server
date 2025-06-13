@@ -11,7 +11,7 @@ def test_api():
         print(response.json())
     else:
         # 실패
-        print(response.text())
+        print(response.text)
 
 if __name__ == "__main__":
     test_api()
