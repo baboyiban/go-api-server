@@ -5,7 +5,6 @@ import (
 )
 
 type DeliveryLog struct {
-	DeliveryID          int        `json:"delivery_id" gorm:"column:delivery_id;type:int;primaryKey;autoIncrement"`
 	TripID              int        `json:"trip_id" gorm:"column:trip_id;type:int;not null;"`
 	TripLog             TripLog    `json:"-" gorm:"foreignKey:TripID;references:TripID"`
 	PackageID           int        `json:"package_id" gorm:"column:package_id;type:int;not null"`

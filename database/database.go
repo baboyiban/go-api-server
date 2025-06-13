@@ -43,7 +43,7 @@ func InitDB() *gorm.DB {
 
 // autoMigrateAll 모든 모델에 대해 자동 마이그레이션 수행
 func autoMigrateAll(db *gorm.DB) {
-	modelsToMigrate := []interface{}{
+	modelsToMigrate := []any{
 		&models.Region{},
 		&models.Vehicle{},
 		&models.Employee{},
