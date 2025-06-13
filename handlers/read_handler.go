@@ -114,7 +114,7 @@ func RegisterReadHandlers(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/package/:id", GetByIDHandler[models.Package](db, "package_id"))
 	router.GET("/api/vehicle/:id", GetByIDHandler[models.Vehicle](db, "internal_id"))
 	router.GET("/api/trip_log/:id", GetByIDHandler[models.TripLog](db, "trip_id"))
-	router.GET("/api/delivery_log/:id", GetByIDHandler[models.DeliveryLog](db, "delivery_id"))
+	router.GET("/api/delivery_log/:id", GetByIDHandler[models.DeliveryLog](db, "trip_id"))
 	router.GET("/api/employee/:id", GetByIDHandler[models.Employee](db, "employee_id"))
 
 	// 각 필드로 검색
