@@ -64,8 +64,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     env_file: .env
     command:
-      - "--log.level=DEBUG" # 디버그 모드
-      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # 디버그 모드
+      # - "--log.level=DEBUG" # 디버그 모드
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # 디버그 모드
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
