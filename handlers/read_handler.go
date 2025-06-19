@@ -11,7 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
-// 전체 조회
+// GetAllRegions godoc
+// @Summary      모든 지역 조회
+// @Description  모든 지역 정보를 반환합니다.
+// @Tags         region
+// @Produce      json
+// @Success      200  {array}   models.Region
+// @Router       /api/region [get]
 func GetAllHandler[T any](db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var results []T
@@ -23,7 +29,15 @@ func GetAllHandler[T any](db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// ID 조회
+// GetRegionByID godoc
+// @Summary      지역 단건 조회
+// @Description  지역 ID로 지역 정보를 조회합니다.
+// @Tags         region
+// @Produce      json
+// @Param        id   path      string  true  "지역 ID"
+// @Success      200  {object}  models.Region
+// @Failure      404  {object}  map[string]string
+// @Router       /api/region/{id} [get]
 func GetByIDHandler[T any](db *gorm.DB, idField string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -38,7 +52,22 @@ func GetByIDHandler[T any](db *gorm.DB, idField string) gin.HandlerFunc {
 	}
 }
 
-// 각 필드 조회
+// SearchRegions godoc
+// @Summary      지역 검색
+// @Description  쿼리 파라미터로 지역을 검색합니다.
+// @Tags         region
+// @Produce      json
+// @Param        region_id        query     string  false  "지역 ID"
+// @Param        region_name      query     string  false  "지역명"
+// @Param        coord_x          query     int     false  "X 좌표"
+// @Param        coord_y          query     int     false  "Y 좌표"
+// @Param        max_capacity     query     int     false  "최대 용량"
+// @Param        current_capacity query     int     false  "현재 용량"
+// @Param        is_full          query     bool    false  "포화 여부"
+// @Param        saturated_at     query     string  false  "포화 시각(RFC3339)"
+// @Success      200  {array}   models.Region
+// @Failure      400  {object}  map[string]string
+// @Router       /api/region/search [get]
 func GetByField[T any](db *gorm.DB, validFields map[string]bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. 쿼리 파라미터 추출 (필터 조건)

@@ -1,0 +1,123 @@
+basePath: /
+definitions:
+  models.Region:
+    properties:
+      coord_x:
+        type: integer
+      coord_y:
+        type: integer
+      current_capacity:
+        type: integer
+      is_full:
+        type: boolean
+      max_capacity:
+        type: integer
+      region_id:
+        type: string
+      region_name:
+        type: string
+      saturated_at:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: 패키지 운송 시스템 API 문서입니다.
+  title: Go API Server
+  version: "1.0"
+paths:
+  /api/region:
+    get:
+      description: 모든 지역 정보를 반환합니다.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Region'
+            type: array
+      summary: 모든 지역 조회
+      tags:
+      - region
+  /api/region/{id}:
+    get:
+      description: 지역 ID로 지역 정보를 조회합니다.
+      parameters:
+      - description: 지역 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Region'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 지역 단건 조회
+      tags:
+      - region
+  /api/region/search:
+    get:
+      description: 쿼리 파라미터로 지역을 검색합니다.
+      parameters:
+      - description: 지역 ID
+        in: query
+        name: region_id
+        type: string
+      - description: 지역명
+        in: query
+        name: region_name
+        type: string
+      - description: X 좌표
+        in: query
+        name: coord_x
+        type: integer
+      - description: Y 좌표
+        in: query
+        name: coord_y
+        type: integer
+      - description: 최대 용량
+        in: query
+        name: max_capacity
+        type: integer
+      - description: 현재 용량
+        in: query
+        name: current_capacity
+        type: integer
+      - description: 포화 여부
+        in: query
+        name: is_full
+        type: boolean
+      - description: 포화 시각(RFC3339)
+        in: query
+        name: saturated_at
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Region'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 지역 검색
+      tags:
+      - region
+swagger: "2.0"

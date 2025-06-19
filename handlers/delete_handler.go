@@ -8,7 +8,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// Delete 핸들러 공통 함수
+// DeleteRegion godoc
+// @Summary      지역 삭제
+// @Description  지역 ID로 지역 정보를 삭제합니다.
+// @Tags         region
+// @Produce      json
+// @Param        id   path      string  true  "지역 ID"
+// @Success      204  "No Content"
+// @Failure      404  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /api/region/{id} [delete]
 func DeleteHandler[T any](db *gorm.DB, idField string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")

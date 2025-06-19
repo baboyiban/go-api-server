@@ -8,7 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
-// Update 핸들러 공통 함수
+// UpdateRegion godoc
+// @Summary      지역 정보 수정
+// @Description  지역 ID로 지역 정보를 수정합니다.
+// @Tags         region
+// @Accept       json
+// @Produce      json
+// @Param        id      path      string         true  "지역 ID"
+// @Param        region  body      models.Region  true  "수정할 지역 정보"
+// @Success      200     {object}  models.Region
+// @Failure      400     {object}  map[string]string
+// @Failure      404     {object}  map[string]string
+// @Failure      500     {object}  map[string]string
+// @Router       /api/region/{id} [put]
 func UpdateHandler[T any](db *gorm.DB, idField string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. ID로 기존 레코드 조회

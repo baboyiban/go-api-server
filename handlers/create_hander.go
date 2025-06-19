@@ -7,6 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// CreateRegion godoc
+// @Summary      지역 생성
+// @Description  새로운 지역을 생성합니다.
+// @Tags         region
+// @Accept       json
+// @Produce      json
+// @Param        region  body      models.Region  true  "지역 정보"
+// @Success      201     {object}  models.Region
+// @Failure      400     {object}  map[string]string
+// @Failure      500     {object}  map[string]string
+// @Router       /api/region [post]
 func CreateHandler[T any](db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var item T
