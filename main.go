@@ -5,6 +5,7 @@ import (
 	"os"
 
 	_ "github.com/baboyiban/go-api-server/docs"
+	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -47,8 +48,57 @@ func getEnv(key, fallback string) string {
 }
 
 func registerRoutes(router *gin.Engine, db *gorm.DB) {
-	handlers.RegisterCreateHandlers(router, db)
-	handlers.RegisterReadHandlers(router, db)
-	handlers.RegisterDeleteHandlers(router, db)
-	handlers.RegisterUpdateHandlers(router, db)
+	regionService := service.NewRegionService(db)
+	regionHandler := handlers.NewRegionHandler(regionService)
+	router.POST("/api/region", regionHandler.CreateRegion)
+	router.GET("/api/region/:id", regionHandler.GetRegionByID)
+	router.PUT("/api/region/:id", regionHandler.UpdateRegion)
+	router.DELETE("/api/region/:id", regionHandler.DeleteRegion)
+	router.GET("/api/region", regionHandler.ListRegions)
+	router.GET("/api/region/search", regionHandler.SearchRegions)
+
+	packageService := service.NewPackageService(db)
+	packageHandler := handlers.NewPackageHandler(packageService)
+	router.POST("/api/package", packageHandler.CreatePackage)
+	router.GET("/api/package/:id", packageHandler.GetPackageByID)
+	router.PUT("/api/package/:id", packageHandler.UpdatePackage)
+	router.DELETE("/api/package/:id", packageHandler.DeletePackage)
+	router.GET("/api/package", packageHandler.ListPackages)
+	router.GET("/api/package/search", packageHandler.SearchPackages)
+
+	vehicleService := service.NewVehicleService(db)
+	vehicleHandler := handlers.NewVehicleHandler(vehicleService)
+	router.POST("/api/vehicle", vehicleHandler.CreateVehicle)
+	router.GET("/api/vehicle/:id", vehicleHandler.GetVehicleByID)
+	router.PUT("/api/vehicle/:id", vehicleHandler.UpdateVehicle)
+	router.DELETE("/api/vehicle/:id", vehicleHandler.DeleteVehicle)
+	router.GET("/api/vehicle", vehicleHandler.ListVehicles)
+	router.GET("/api/vehicle/search", vehicleHandler.SearchVehicles)
+
+	tripLogBService := service.NewTripLogBService(db)
+	tripLogBHandler := handlers.NewTripLogBHandler(tripLogBService)
+	router.POST("/api/trip-log-b", tripLogBHandler.CreateTripLogB)
+	router.GET("/api/trip-log-b/:id", tripLogBHandler.GetTripLogBByID)
+	router.PUT("/api/trip-log-b/:id", tripLogBHandler.UpdateTripLogB)
+	router.DELETE("/api/trip-log-b/:id", tripLogBHandler.DeleteTripLogB)
+	router.GET("/api/trip-log-b", tripLogBHandler.ListTripLogBs)
+	router.GET("/api/trip-log-b/search", tripLogBHandler.SearchTripLogBs)
+
+	deliveryLogService := service.NewDeliveryLogService(db)
+	deliveryLogHandler := handlers.NewDeliveryLogHandler(deliveryLogService)
+	router.POST("/api/delivery-log", deliveryLogHandler.CreateDeliveryLog)
+	router.GET("/api/delivery-log/:id", deliveryLogHandler.GetDeliveryLogByID)
+	router.PUT("/api/delivery-log/:id", deliveryLogHandler.UpdateDeliveryLog)
+	router.DELETE("/api/delivery-log/:id", deliveryLogHandler.DeleteDeliveryLog)
+	router.GET("/api/delivery-log", deliveryLogHandler.ListDeliveryLogs)
+	router.GET("/api/delivery-log/search", deliveryLogHandler.SearchDeliveryLogs)
+
+	employeeService := service.NewEmployeeService(db)
+	employeeHandler := handlers.NewEmployeeHandler(employeeService)
+	router.POST("/api/employee", employeeHandler.CreateEmployee)
+	router.GET("/api/employee/:id", employeeHandler.GetEmployeeByID)
+	router.PUT("/api/employee/:id", employeeHandler.UpdateEmployee)
+	router.DELETE("/api/employee/:id", employeeHandler.DeleteEmployee)
+	router.GET("/api/employee", employeeHandler.ListEmployees)
+	router.GET("/api/employee/search", employeeHandler.SearchEmployees)
 }

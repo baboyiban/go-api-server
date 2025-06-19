@@ -9,6 +9,816 @@
     "host": "localhost:3000",
     "basePath": "/",
     "paths": {
+        "/api/delivery-log": {
+            "get": {
+                "description": "모든 배송 로그 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "모든 배송 로그 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -registration_time, -trip_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DeliveryLogResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 배송 로그를 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "배송 로그 생성",
+                "parameters": [
+                    {
+                        "description": "배송 로그 정보",
+                        "name": "delivery_log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateDeliveryLogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeliveryLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delivery-log/search": {
+            "get": {
+                "description": "쿼리 파라미터로 배송 로그를 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "배송 로그 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "trip_id",
+                        "name": "trip_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "package_id",
+                        "name": "package_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "region_id",
+                        "name": "region_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "load_order",
+                        "name": "load_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -registration_time, -trip_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.DeliveryLogResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delivery-log/{id}": {
+            "get": {
+                "description": "trip_id로 배송 로그를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "배송 로그 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "배송 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeliveryLogResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "trip_id로 배송 로그 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "배송 로그 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "배송 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 배송 로그 정보",
+                        "name": "delivery_log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateDeliveryLogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeliveryLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "trip_id로 배송 로그를 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "delivery_log"
+                ],
+                "summary": "배송 로그 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "배송 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/employee": {
+            "get": {
+                "description": "모든 직원 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "모든 직원 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -employee_id, -position 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.EmployeeResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 직원을 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "직원 생성",
+                "parameters": [
+                    {
+                        "description": "직원 정보",
+                        "name": "employee",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateEmployeeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EmployeeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/employee/search": {
+            "get": {
+                "description": "쿼리 파라미터로 직원을 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "직원 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "직원 ID",
+                        "name": "employee_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "직책",
+                        "name": "position",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "활성 여부",
+                        "name": "is_active",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -employee_id, -position 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.EmployeeResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/employee/{id}": {
+            "get": {
+                "description": "직원 ID로 직원 정보를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "직원 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "직원 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EmployeeResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "직원 ID로 직원 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "직원 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "직원 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 직원 정보",
+                        "name": "employee",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateEmployeeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EmployeeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "직원 ID로 직원을 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "직원 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "직원 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/package": {
+            "get": {
+                "description": "모든 패키지 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "모든 패키지 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -registered_at는 최신순, package_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.PackageResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 패키지를 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "패키지 생성",
+                "parameters": [
+                    {
+                        "description": "패키지 정보",
+                        "name": "package",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreatePackageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PackageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/package/search": {
+            "get": {
+                "description": "쿼리 파라미터로 패키지를 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "패키지 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "패키지 ID",
+                        "name": "package_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "패키지 타입",
+                        "name": "package_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "지역 ID",
+                        "name": "region_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "패키지 상태",
+                        "name": "package_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "등록 시각(RFC3339)",
+                        "name": "registered_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -registered_at, -package_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.PackageResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/package/{id}": {
+            "get": {
+                "description": "패키지 ID로 패키지 정보를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "패키지 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "패키지 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PackageResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "패키지 ID로 패키지 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "패키지 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "패키지 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 패키지 정보",
+                        "name": "package",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePackageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PackageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "패키지 ID로 패키지를 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "package"
+                ],
+                "summary": "패키지 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "패키지 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/region": {
             "get": {
                 "description": "모든 지역 정보를 반환합니다.",
@@ -19,14 +829,66 @@
                     "region"
                 ],
                 "summary": "모든 지역 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -registered_at는 최신순, region_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Region"
+                                "$ref": "#/definitions/dto.RegionResponse"
                             }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 지역을 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "region"
+                ],
+                "summary": "지역 생성",
+                "parameters": [
+                    {
+                        "description": "지역 정보",
+                        "name": "region",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateRegionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -90,6 +952,12 @@
                         "description": "포화 시각(RFC3339)",
                         "name": "saturated_at",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -98,17 +966,14 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Region"
+                                "$ref": "#/definitions/dto.RegionResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -137,16 +1002,688 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Region"
+                            "$ref": "#/definitions/dto.RegionResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "지역 ID로 지역 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "region"
+                ],
+                "summary": "지역 정보 수정",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "지역 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 지역 정보",
+                        "name": "region",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateRegionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "지역 ID로 지역 정보를 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "region"
+                ],
+                "summary": "지역 삭제",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "지역 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/trip-log-b": {
+            "get": {
+                "description": "모든 B차 운행 로그 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "모든 B차 운행 로그 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TripLogBResponse"
                             }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 B차 운행 로그를 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "B차 운행 로그 생성",
+                "parameters": [
+                    {
+                        "description": "B차 운행 로그 정보",
+                        "name": "trip_log_b",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTripLogBRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogBResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/trip-log-b/search": {
+            "get": {
+                "description": "쿼리 파라미터로 B차 운행 로그를 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "B차 운행 로그 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "trip_id",
+                        "name": "trip_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "차량 ID",
+                        "name": "vehicle_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "상태",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "목적지1",
+                        "name": "destination_1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "목적지2",
+                        "name": "destination_2",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "목적지3",
+                        "name": "destination_3",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TripLogBResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/trip-log-b/{id}": {
+            "get": {
+                "description": "trip_id로 B차 운행 로그를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "B차 운행 로그 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "B차 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogBResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "trip_id로 B차 운행 로그 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "B차 운행 로그 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "B차 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 B차 운행 로그 정보",
+                        "name": "trip_log_b",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTripLogBRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogBResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "trip_id로 B차 운행 로그를 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log_b"
+                ],
+                "summary": "B차 운행 로그 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "B차 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vehicle": {
+            "get": {
+                "description": "모든 차량 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "모든 차량 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -internal_id, -vehicle_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.VehicleResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 차량을 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "차량 생성",
+                "parameters": [
+                    {
+                        "description": "차량 정보",
+                        "name": "vehicle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vehicle/search": {
+            "get": {
+                "description": "쿼리 파라미터로 차량을 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "차량 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 Internal ID",
+                        "name": "internal_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "차량 ID",
+                        "name": "vehicle_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "현재 적재량",
+                        "name": "current_load",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "최대 적재량",
+                        "name": "max_load",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "LED 상태",
+                        "name": "led_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "확인 필요 여부",
+                        "name": "needs_confirmation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "X 좌표",
+                        "name": "coord_x",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Y 좌표",
+                        "name": "coord_y",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -internal_id, -vehicle_id 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.VehicleResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/vehicle/{id}": {
+            "get": {
+                "description": "차량 ID로 차량 정보를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "차량 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 Internal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "차량 ID로 차량 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "차량 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 Internal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 차량 정보",
+                        "name": "vehicle",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateVehicleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.VehicleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "차량 ID로 차량을 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vehicle"
+                ],
+                "summary": "차량 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 Internal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -154,7 +1691,237 @@
         }
     },
     "definitions": {
-        "models.Region": {
+        "dto.CreateDeliveryLogRequest": {
+            "type": "object",
+            "required": [
+                "package_id",
+                "region_id",
+                "trip_id"
+            ],
+            "properties": {
+                "completed_at": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "first_transport_time": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "input_time": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "load_order": {
+                    "type": "integer"
+                },
+                "package_id": {
+                    "type": "integer"
+                },
+                "region_id": {
+                    "type": "string"
+                },
+                "registration_time": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "second_transport_time": {
+                    "description": "RFC3339",
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.CreateEmployeeRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "position"
+            ],
+            "properties": {
+                "is_active": {
+                    "description": "optional, default true",
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string",
+                    "enum": [
+                        "관리직",
+                        "운송직"
+                    ]
+                }
+            }
+        },
+        "dto.CreatePackageRequest": {
+            "type": "object",
+            "required": [
+                "package_type",
+                "region_id"
+            ],
+            "properties": {
+                "package_status": {
+                    "type": "string"
+                },
+                "package_type": {
+                    "type": "string"
+                },
+                "region_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateRegionRequest": {
+            "type": "object",
+            "required": [
+                "region_id",
+                "region_name"
+            ],
+            "properties": {
+                "coord_x": {
+                    "type": "integer"
+                },
+                "coord_y": {
+                    "type": "integer"
+                },
+                "max_capacity": {
+                    "type": "integer"
+                },
+                "region_id": {
+                    "type": "string"
+                },
+                "region_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateTripLogBRequest": {
+            "type": "object",
+            "required": [
+                "vehicle_id"
+            ],
+            "properties": {
+                "destination_1": {
+                    "type": "string"
+                },
+                "destination_2": {
+                    "type": "string"
+                },
+                "destination_3": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "description": "RFC3339 string",
+                    "type": "string"
+                },
+                "start_time": {
+                    "description": "RFC3339 string",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "\"운행중\" or \"비운행중\"",
+                    "type": "string"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateVehicleRequest": {
+            "type": "object",
+            "required": [
+                "vehicle_id"
+            ],
+            "properties": {
+                "max_load": {
+                    "type": "integer"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DeliveryLogResponse": {
+            "type": "object",
+            "properties": {
+                "completed_at": {
+                    "type": "string"
+                },
+                "first_transport_time": {
+                    "type": "string"
+                },
+                "input_time": {
+                    "type": "string"
+                },
+                "load_order": {
+                    "type": "integer"
+                },
+                "package_id": {
+                    "type": "integer"
+                },
+                "region_id": {
+                    "type": "string"
+                },
+                "registration_time": {
+                    "type": "string"
+                },
+                "second_transport_time": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.EmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "employee_id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "position": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PackageResponse": {
+            "type": "object",
+            "properties": {
+                "package_id": {
+                    "type": "integer"
+                },
+                "package_status": {
+                    "type": "string"
+                },
+                "package_type": {
+                    "type": "string"
+                },
+                "region_id": {
+                    "type": "string"
+                },
+                "registered_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegionResponse": {
             "type": "object",
             "properties": {
                 "coord_x": {
@@ -179,6 +1946,191 @@
                     "type": "string"
                 },
                 "saturated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripLogBResponse": {
+            "type": "object",
+            "properties": {
+                "destination_1": {
+                    "type": "string"
+                },
+                "destination_2": {
+                    "type": "string"
+                },
+                "destination_3": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "integer"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateDeliveryLogRequest": {
+            "type": "object",
+            "properties": {
+                "completed_at": {
+                    "type": "string"
+                },
+                "first_transport_time": {
+                    "type": "string"
+                },
+                "input_time": {
+                    "type": "string"
+                },
+                "load_order": {
+                    "type": "integer"
+                },
+                "registration_time": {
+                    "type": "string"
+                },
+                "second_transport_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateEmployeeRequest": {
+            "type": "object",
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string",
+                    "enum": [
+                        "관리직",
+                        "운송직"
+                    ]
+                }
+            }
+        },
+        "dto.UpdatePackageRequest": {
+            "type": "object",
+            "properties": {
+                "package_status": {
+                    "type": "string"
+                },
+                "package_type": {
+                    "type": "string"
+                },
+                "region_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateRegionRequest": {
+            "type": "object",
+            "required": [
+                "region_name"
+            ],
+            "properties": {
+                "coord_x": {
+                    "type": "integer"
+                },
+                "coord_y": {
+                    "type": "integer"
+                },
+                "current_capacity": {
+                    "type": "integer"
+                },
+                "is_full": {
+                    "type": "boolean"
+                },
+                "max_capacity": {
+                    "type": "integer"
+                },
+                "region_name": {
+                    "type": "string"
+                },
+                "saturated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateTripLogBRequest": {
+            "type": "object",
+            "properties": {
+                "destination_1": {
+                    "type": "string"
+                },
+                "destination_2": {
+                    "type": "string"
+                },
+                "destination_3": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateVehicleRequest": {
+            "type": "object",
+            "properties": {
+                "coord_x": {
+                    "type": "integer"
+                },
+                "coord_y": {
+                    "type": "integer"
+                },
+                "led_status": {
+                    "type": "string"
+                },
+                "max_load": {
+                    "type": "integer"
+                },
+                "needs_confirmation": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.VehicleResponse": {
+            "type": "object",
+            "properties": {
+                "coord_x": {
+                    "type": "integer"
+                },
+                "coord_y": {
+                    "type": "integer"
+                },
+                "current_load": {
+                    "type": "integer"
+                },
+                "internal_id": {
+                    "type": "integer"
+                },
+                "led_status": {
+                    "type": "string"
+                },
+                "max_load": {
+                    "type": "integer"
+                },
+                "needs_confirmation": {
+                    "type": "boolean"
+                },
+                "vehicle_id": {
                     "type": "string"
                 }
             }

@@ -1,6 +1,161 @@
 basePath: /
 definitions:
-  models.Region:
+  dto.CreateDeliveryLogRequest:
+    properties:
+      completed_at:
+        description: RFC3339
+        type: string
+      first_transport_time:
+        description: RFC3339
+        type: string
+      input_time:
+        description: RFC3339
+        type: string
+      load_order:
+        type: integer
+      package_id:
+        type: integer
+      region_id:
+        type: string
+      registration_time:
+        description: RFC3339
+        type: string
+      second_transport_time:
+        description: RFC3339
+        type: string
+      trip_id:
+        type: integer
+    required:
+    - package_id
+    - region_id
+    - trip_id
+    type: object
+  dto.CreateEmployeeRequest:
+    properties:
+      is_active:
+        description: optional, default true
+        type: boolean
+      password:
+        type: string
+      position:
+        enum:
+        - 관리직
+        - 운송직
+        type: string
+    required:
+    - password
+    - position
+    type: object
+  dto.CreatePackageRequest:
+    properties:
+      package_status:
+        type: string
+      package_type:
+        type: string
+      region_id:
+        type: string
+    required:
+    - package_type
+    - region_id
+    type: object
+  dto.CreateRegionRequest:
+    properties:
+      coord_x:
+        type: integer
+      coord_y:
+        type: integer
+      max_capacity:
+        type: integer
+      region_id:
+        type: string
+      region_name:
+        type: string
+    required:
+    - region_id
+    - region_name
+    type: object
+  dto.CreateTripLogBRequest:
+    properties:
+      destination_1:
+        type: string
+      destination_2:
+        type: string
+      destination_3:
+        type: string
+      end_time:
+        description: RFC3339 string
+        type: string
+      start_time:
+        description: RFC3339 string
+        type: string
+      status:
+        description: '"운행중" or "비운행중"'
+        type: string
+      vehicle_id:
+        type: string
+    required:
+    - vehicle_id
+    type: object
+  dto.CreateVehicleRequest:
+    properties:
+      max_load:
+        type: integer
+      vehicle_id:
+        type: string
+    required:
+    - vehicle_id
+    type: object
+  dto.DeliveryLogResponse:
+    properties:
+      completed_at:
+        type: string
+      first_transport_time:
+        type: string
+      input_time:
+        type: string
+      load_order:
+        type: integer
+      package_id:
+        type: integer
+      region_id:
+        type: string
+      registration_time:
+        type: string
+      second_transport_time:
+        type: string
+      trip_id:
+        type: integer
+    type: object
+  dto.EmployeeResponse:
+    properties:
+      employee_id:
+        type: integer
+      is_active:
+        type: boolean
+      position:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      details:
+        type: string
+      error:
+        type: string
+    type: object
+  dto.PackageResponse:
+    properties:
+      package_id:
+        type: integer
+      package_status:
+        type: string
+      package_type:
+        type: string
+      region_id:
+        type: string
+      registered_at:
+        type: string
+    type: object
+  dto.RegionResponse:
     properties:
       coord_x:
         type: integer
@@ -19,6 +174,127 @@ definitions:
       saturated_at:
         type: string
     type: object
+  dto.TripLogBResponse:
+    properties:
+      destination_1:
+        type: string
+      destination_2:
+        type: string
+      destination_3:
+        type: string
+      end_time:
+        type: string
+      start_time:
+        type: string
+      status:
+        type: string
+      trip_id:
+        type: integer
+      vehicle_id:
+        type: string
+    type: object
+  dto.UpdateDeliveryLogRequest:
+    properties:
+      completed_at:
+        type: string
+      first_transport_time:
+        type: string
+      input_time:
+        type: string
+      load_order:
+        type: integer
+      registration_time:
+        type: string
+      second_transport_time:
+        type: string
+    type: object
+  dto.UpdateEmployeeRequest:
+    properties:
+      is_active:
+        type: boolean
+      password:
+        type: string
+      position:
+        enum:
+        - 관리직
+        - 운송직
+        type: string
+    type: object
+  dto.UpdatePackageRequest:
+    properties:
+      package_status:
+        type: string
+      package_type:
+        type: string
+      region_id:
+        type: string
+    type: object
+  dto.UpdateRegionRequest:
+    properties:
+      coord_x:
+        type: integer
+      coord_y:
+        type: integer
+      current_capacity:
+        type: integer
+      is_full:
+        type: boolean
+      max_capacity:
+        type: integer
+      region_name:
+        type: string
+      saturated_at:
+        type: string
+    required:
+    - region_name
+    type: object
+  dto.UpdateTripLogBRequest:
+    properties:
+      destination_1:
+        type: string
+      destination_2:
+        type: string
+      destination_3:
+        type: string
+      end_time:
+        type: string
+      start_time:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.UpdateVehicleRequest:
+    properties:
+      coord_x:
+        type: integer
+      coord_y:
+        type: integer
+      led_status:
+        type: string
+      max_load:
+        type: integer
+      needs_confirmation:
+        type: boolean
+    type: object
+  dto.VehicleResponse:
+    properties:
+      coord_x:
+        type: integer
+      coord_y:
+        type: integer
+      current_load:
+        type: integer
+      internal_id:
+        type: integer
+      led_status:
+        type: string
+      max_load:
+        type: integer
+      needs_confirmation:
+        type: boolean
+      vehicle_id:
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -26,9 +302,14 @@ info:
   title: Go API Server
   version: "1.0"
 paths:
-  /api/region:
+  /api/delivery-log:
     get:
-      description: 모든 지역 정보를 반환합니다.
+      description: 모든 배송 로그 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -registration_time, -trip_id 등)'
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -36,12 +317,599 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Region'
+              $ref: '#/definitions/dto.DeliveryLogResponse'
+            type: array
+      summary: 모든 배송 로그 조회
+      tags:
+      - delivery_log
+    post:
+      consumes:
+      - application/json
+      description: 새로운 배송 로그를 생성합니다.
+      parameters:
+      - description: 배송 로그 정보
+        in: body
+        name: delivery_log
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateDeliveryLogRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.DeliveryLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 배송 로그 생성
+      tags:
+      - delivery_log
+  /api/delivery-log/{id}:
+    delete:
+      description: trip_id로 배송 로그를 삭제합니다.
+      parameters:
+      - description: 배송 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 배송 로그 삭제
+      tags:
+      - delivery_log
+    get:
+      description: trip_id로 배송 로그를 조회합니다.
+      parameters:
+      - description: 배송 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeliveryLogResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 배송 로그 단건 조회
+      tags:
+      - delivery_log
+    put:
+      consumes:
+      - application/json
+      description: trip_id로 배송 로그 정보를 수정합니다.
+      parameters:
+      - description: 배송 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 배송 로그 정보
+        in: body
+        name: delivery_log
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateDeliveryLogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeliveryLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 배송 로그 정보 수정
+      tags:
+      - delivery_log
+  /api/delivery-log/search:
+    get:
+      description: 쿼리 파라미터로 배송 로그를 검색합니다.
+      parameters:
+      - description: trip_id
+        in: query
+        name: trip_id
+        type: integer
+      - description: package_id
+        in: query
+        name: package_id
+        type: integer
+      - description: region_id
+        in: query
+        name: region_id
+        type: string
+      - description: load_order
+        in: query
+        name: load_order
+        type: integer
+      - description: '정렬 필드 (예: -registration_time, -trip_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.DeliveryLogResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 배송 로그 검색
+      tags:
+      - delivery_log
+  /api/employee:
+    get:
+      description: 모든 직원 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -employee_id, -position 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.EmployeeResponse'
+            type: array
+      summary: 모든 직원 조회
+      tags:
+      - employee
+    post:
+      consumes:
+      - application/json
+      description: 새로운 직원을 생성합니다.
+      parameters:
+      - description: 직원 정보
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 직원 생성
+      tags:
+      - employee
+  /api/employee/{id}:
+    delete:
+      description: 직원 ID로 직원을 삭제합니다.
+      parameters:
+      - description: 직원 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 직원 삭제
+      tags:
+      - employee
+    get:
+      description: 직원 ID로 직원 정보를 조회합니다.
+      parameters:
+      - description: 직원 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 직원 단건 조회
+      tags:
+      - employee
+    put:
+      consumes:
+      - application/json
+      description: 직원 ID로 직원 정보를 수정합니다.
+      parameters:
+      - description: 직원 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 직원 정보
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 직원 정보 수정
+      tags:
+      - employee
+  /api/employee/search:
+    get:
+      description: 쿼리 파라미터로 직원을 검색합니다.
+      parameters:
+      - description: 직원 ID
+        in: query
+        name: employee_id
+        type: integer
+      - description: 직책
+        in: query
+        name: position
+        type: string
+      - description: 활성 여부
+        in: query
+        name: is_active
+        type: boolean
+      - description: '정렬 필드 (예: -employee_id, -position 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.EmployeeResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 직원 검색
+      tags:
+      - employee
+  /api/package:
+    get:
+      description: 모든 패키지 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -registered_at는 최신순, package_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PackageResponse'
+            type: array
+      summary: 모든 패키지 조회
+      tags:
+      - package
+    post:
+      consumes:
+      - application/json
+      description: 새로운 패키지를 생성합니다.
+      parameters:
+      - description: 패키지 정보
+        in: body
+        name: package
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePackageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.PackageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 패키지 생성
+      tags:
+      - package
+  /api/package/{id}:
+    delete:
+      description: 패키지 ID로 패키지를 삭제합니다.
+      parameters:
+      - description: 패키지 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 패키지 삭제
+      tags:
+      - package
+    get:
+      description: 패키지 ID로 패키지 정보를 조회합니다.
+      parameters:
+      - description: 패키지 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PackageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 패키지 단건 조회
+      tags:
+      - package
+    put:
+      consumes:
+      - application/json
+      description: 패키지 ID로 패키지 정보를 수정합니다.
+      parameters:
+      - description: 패키지 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 패키지 정보
+        in: body
+        name: package
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatePackageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PackageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 패키지 정보 수정
+      tags:
+      - package
+  /api/package/search:
+    get:
+      description: 쿼리 파라미터로 패키지를 검색합니다.
+      parameters:
+      - description: 패키지 ID
+        in: query
+        name: package_id
+        type: integer
+      - description: 패키지 타입
+        in: query
+        name: package_type
+        type: string
+      - description: 지역 ID
+        in: query
+        name: region_id
+        type: string
+      - description: 패키지 상태
+        in: query
+        name: package_status
+        type: string
+      - description: 등록 시각(RFC3339)
+        in: query
+        name: registered_at
+        type: string
+      - description: '정렬 필드 (예: -registered_at, -package_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PackageResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 패키지 검색
+      tags:
+      - package
+  /api/region:
+    get:
+      description: 모든 지역 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -registered_at는 최신순, region_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.RegionResponse'
             type: array
       summary: 모든 지역 조회
       tags:
       - region
+    post:
+      consumes:
+      - application/json
+      description: 새로운 지역을 생성합니다.
+      parameters:
+      - description: 지역 정보
+        in: body
+        name: region
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateRegionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.RegionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 지역 생성
+      tags:
+      - region
   /api/region/{id}:
+    delete:
+      description: 지역 ID로 지역 정보를 삭제합니다.
+      parameters:
+      - description: 지역 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 지역 삭제
+      tags:
+      - region
     get:
       description: 지역 ID로 지역 정보를 조회합니다.
       parameters:
@@ -56,14 +924,54 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Region'
+            $ref: '#/definitions/dto.RegionResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: 지역 단건 조회
+      tags:
+      - region
+    put:
+      consumes:
+      - application/json
+      description: 지역 ID로 지역 정보를 수정합니다.
+      parameters:
+      - description: 지역 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 수정할 지역 정보
+        in: body
+        name: region
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateRegionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.RegionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 지역 정보 수정
       tags:
       - region
   /api/region/search:
@@ -102,6 +1010,10 @@ paths:
         in: query
         name: saturated_at
         type: string
+      - description: '정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)'
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -109,15 +1021,393 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Region'
+              $ref: '#/definitions/dto.RegionResponse'
             type: array
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: 지역 검색
       tags:
       - region
+  /api/trip-log-b:
+    get:
+      description: 모든 B차 운행 로그 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -trip_id, -start_time 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TripLogBResponse'
+            type: array
+      summary: 모든 B차 운행 로그 조회
+      tags:
+      - trip_log_b
+    post:
+      consumes:
+      - application/json
+      description: 새로운 B차 운행 로그를 생성합니다.
+      parameters:
+      - description: B차 운행 로그 정보
+        in: body
+        name: trip_log_b
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTripLogBRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.TripLogBResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: B차 운행 로그 생성
+      tags:
+      - trip_log_b
+  /api/trip-log-b/{id}:
+    delete:
+      description: trip_id로 B차 운행 로그를 삭제합니다.
+      parameters:
+      - description: B차 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: B차 운행 로그 삭제
+      tags:
+      - trip_log_b
+    get:
+      description: trip_id로 B차 운행 로그를 조회합니다.
+      parameters:
+      - description: B차 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TripLogBResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: B차 운행 로그 단건 조회
+      tags:
+      - trip_log_b
+    put:
+      consumes:
+      - application/json
+      description: trip_id로 B차 운행 로그 정보를 수정합니다.
+      parameters:
+      - description: B차 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 B차 운행 로그 정보
+        in: body
+        name: trip_log_b
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTripLogBRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TripLogBResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: B차 운행 로그 정보 수정
+      tags:
+      - trip_log_b
+  /api/trip-log-b/search:
+    get:
+      description: 쿼리 파라미터로 B차 운행 로그를 검색합니다.
+      parameters:
+      - description: trip_id
+        in: query
+        name: trip_id
+        type: integer
+      - description: 차량 ID
+        in: query
+        name: vehicle_id
+        type: string
+      - description: 상태
+        in: query
+        name: status
+        type: string
+      - description: 목적지1
+        in: query
+        name: destination_1
+        type: string
+      - description: 목적지2
+        in: query
+        name: destination_2
+        type: string
+      - description: 목적지3
+        in: query
+        name: destination_3
+        type: string
+      - description: '정렬 필드 (예: -trip_id, -start_time 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TripLogBResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: B차 운행 로그 검색
+      tags:
+      - trip_log_b
+  /api/vehicle:
+    get:
+      description: 모든 차량 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -internal_id, -vehicle_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.VehicleResponse'
+            type: array
+      summary: 모든 차량 조회
+      tags:
+      - vehicle
+    post:
+      consumes:
+      - application/json
+      description: 새로운 차량을 생성합니다.
+      parameters:
+      - description: 차량 정보
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.VehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 생성
+      tags:
+      - vehicle
+  /api/vehicle/{id}:
+    delete:
+      description: 차량 ID로 차량을 삭제합니다.
+      parameters:
+      - description: 차량 Internal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 삭제
+      tags:
+      - vehicle
+    get:
+      description: 차량 ID로 차량 정보를 조회합니다.
+      parameters:
+      - description: 차량 Internal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 단건 조회
+      tags:
+      - vehicle
+    put:
+      consumes:
+      - application/json
+      description: 차량 ID로 차량 정보를 수정합니다.
+      parameters:
+      - description: 차량 Internal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 차량 정보
+        in: body
+        name: vehicle
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateVehicleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.VehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 정보 수정
+      tags:
+      - vehicle
+  /api/vehicle/search:
+    get:
+      description: 쿼리 파라미터로 차량을 검색합니다.
+      parameters:
+      - description: 차량 Internal ID
+        in: query
+        name: internal_id
+        type: integer
+      - description: 차량 ID
+        in: query
+        name: vehicle_id
+        type: string
+      - description: 현재 적재량
+        in: query
+        name: current_load
+        type: integer
+      - description: 최대 적재량
+        in: query
+        name: max_load
+        type: integer
+      - description: LED 상태
+        in: query
+        name: led_status
+        type: string
+      - description: 확인 필요 여부
+        in: query
+        name: needs_confirmation
+        type: boolean
+      - description: X 좌표
+        in: query
+        name: coord_x
+        type: integer
+      - description: Y 좌표
+        in: query
+        name: coord_y
+        type: integer
+      - description: '정렬 필드 (예: -internal_id, -vehicle_id 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.VehicleResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 검색
+      tags:
+      - vehicle
 swagger: "2.0"
