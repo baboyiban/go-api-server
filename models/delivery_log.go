@@ -16,7 +16,7 @@ type DeliveryLog struct {
 	FirstTransportTime  *time.Time `json:"first_transport_time" gorm:"column:first_transport_time;type:datetime"`
 	InputTime           *time.Time `json:"input_time" gorm:"column:input_time;type:datetime"`
 	SecondTransportTime *time.Time `json:"second_transport_time" gorm:"column:second_transport_time;type:datetime"`
-	CompletionAt        *time.Time `json:"completion_at" gorm:"column:completion_at;type:datetime"`
+	CompletedAt         *time.Time `json:"completed_at" gorm:"column:completed_at;type:datetime"`
 }
 
 func (DeliveryLog) TableName() string {
