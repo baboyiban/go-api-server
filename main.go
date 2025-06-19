@@ -75,6 +75,15 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/vehicle", vehicleHandler.ListVehicles)
 	router.GET("/api/vehicle/search", vehicleHandler.SearchVehicles)
 
+	tripLogService := service.NewTripLogService(db)
+	tripLogHandler := handlers.NewTripLogHandler(tripLogService)
+	router.POST("/api/trip-log", tripLogHandler.CreateTripLog)
+	router.GET("/api/trip-log/:id", tripLogHandler.GetTripLogByID)
+	router.PUT("/api/trip-log/:id", tripLogHandler.UpdateTripLog)
+	router.DELETE("/api/trip-log/:id", tripLogHandler.DeleteTripLog)
+	router.GET("/api/trip-log", tripLogHandler.ListTripLogs)
+	router.GET("/api/trip-log/search", tripLogHandler.SearchTripLogs)
+
 	tripLogBService := service.NewTripLogBService(db)
 	tripLogBHandler := handlers.NewTripLogBHandler(tripLogBService)
 	router.POST("/api/trip-log-b", tripLogBHandler.CreateTripLogB)

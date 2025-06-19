@@ -17,7 +17,7 @@ definitions:
         type: integer
       region_id:
         type: string
-      registration_time:
+      registered_at:
         description: RFC3339
         type: string
       second_transport_time:
@@ -96,6 +96,24 @@ definitions:
     required:
     - vehicle_id
     type: object
+  dto.CreateTripLogRequest:
+    properties:
+      destination:
+        type: string
+      end_time:
+        description: RFC3339 string
+        type: string
+      start_time:
+        description: RFC3339 string
+        type: string
+      status:
+        description: '"운행중" or "비운행중"'
+        type: string
+      vehicle_id:
+        type: string
+    required:
+    - vehicle_id
+    type: object
   dto.CreateVehicleRequest:
     properties:
       max_load:
@@ -119,7 +137,7 @@ definitions:
         type: integer
       region_id:
         type: string
-      registration_time:
+      registered_at:
         type: string
       second_transport_time:
         type: string
@@ -193,6 +211,21 @@ definitions:
       vehicle_id:
         type: string
     type: object
+  dto.TripLogResponse:
+    properties:
+      destination:
+        type: string
+      end_time:
+        type: string
+      start_time:
+        type: string
+      status:
+        type: string
+      trip_id:
+        type: integer
+      vehicle_id:
+        type: string
+    type: object
   dto.UpdateDeliveryLogRequest:
     properties:
       completed_at:
@@ -203,7 +236,7 @@ definitions:
         type: string
       load_order:
         type: integer
-      registration_time:
+      registered_at:
         type: string
       second_transport_time:
         type: string
@@ -255,6 +288,17 @@ definitions:
       destination_2:
         type: string
       destination_3:
+        type: string
+      end_time:
+        type: string
+      start_time:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.UpdateTripLogRequest:
+    properties:
+      destination:
         type: string
       end_time:
         type: string
@@ -1030,6 +1074,55 @@ paths:
       summary: 지역 검색
       tags:
       - region
+  /api/trip-log:
+    get:
+      description: 모든 차량 운행 로그 정보를 반환합니다.
+      parameters:
+      - description: '정렬 필드 (예: -trip_id, -start_time 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TripLogResponse'
+            type: array
+      summary: 모든 차량 운행 로그 조회
+      tags:
+      - trip_log
+    post:
+      consumes:
+      - application/json
+      description: 새로운 차량 운행 로그를 생성합니다.
+      parameters:
+      - description: 차량 운행 로그 정보
+        in: body
+        name: trip_log
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTripLogRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.TripLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 운행 로그 생성
+      tags:
+      - trip_log
   /api/trip-log-b:
     get:
       description: 모든 B차 운행 로그 정보를 반환합니다.
@@ -1216,6 +1309,135 @@ paths:
       summary: B차 운행 로그 검색
       tags:
       - trip_log_b
+  /api/trip-log/{id}:
+    delete:
+      description: trip_id로 차량 운행 로그를 삭제합니다.
+      parameters:
+      - description: 차량 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 운행 로그 삭제
+      tags:
+      - trip_log
+    get:
+      description: trip_id로 차량 운행 로그를 조회합니다.
+      parameters:
+      - description: 차량 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TripLogResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 운행 로그 단건 조회
+      tags:
+      - trip_log
+    put:
+      consumes:
+      - application/json
+      description: trip_id로 차량 운행 로그 정보를 수정합니다.
+      parameters:
+      - description: 차량 운행 로그 trip_id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 수정할 차량 운행 로그 정보
+        in: body
+        name: trip_log
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTripLogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TripLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 차량 운행 로그 정보 수정
+      tags:
+      - trip_log
+  /api/trip-log/search:
+    get:
+      description: 쿼리 파라미터로 모든 차량 운행 로그를 검색합니다.
+      parameters:
+      - description: trip_id
+        in: query
+        name: trip_id
+        type: integer
+      - description: 차량 ID
+        in: query
+        name: vehicle_id
+        type: string
+      - description: 상태
+        in: query
+        name: status
+        type: string
+      - description: 목적지
+        in: query
+        name: destination
+        type: string
+      - description: '정렬 필드 (예: -trip_id, -start_time 등)'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.TripLogResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 모든 차량 운행 로그 검색
+      tags:
+      - trip_log
   /api/vehicle:
     get:
       description: 모든 차량 정보를 반환합니다.

@@ -1113,6 +1113,81 @@
                 }
             }
         },
+        "/api/trip-log": {
+            "get": {
+                "description": "모든 차량 운행 로그 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "모든 차량 운행 로그 조회",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TripLogResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "새로운 차량 운행 로그를 생성합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "차량 운행 로그 생성",
+                "parameters": [
+                    {
+                        "description": "차량 운행 로그 정보",
+                        "name": "trip_log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTripLogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/trip-log-b": {
             "get": {
                 "description": "모든 B차 운행 로그 정보를 반환합니다.",
@@ -1371,6 +1446,201 @@
                     {
                         "type": "integer",
                         "description": "B차 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/trip-log/search": {
+            "get": {
+                "description": "쿼리 파라미터로 모든 차량 운행 로그를 검색합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "모든 차량 운행 로그 검색",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "trip_id",
+                        "name": "trip_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "차량 ID",
+                        "name": "vehicle_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "상태",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "목적지",
+                        "name": "destination",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TripLogResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/trip-log/{id}": {
+            "get": {
+                "description": "trip_id로 차량 운행 로그를 조회합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "차량 운행 로그 단건 조회",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "trip_id로 차량 운행 로그 정보를 수정합니다.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "차량 운행 로그 정보 수정",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 운행 로그 trip_id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "수정할 차량 운행 로그 정보",
+                        "name": "trip_log",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTripLogRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "trip_id로 차량 운행 로그를 삭제합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip_log"
+                ],
+                "summary": "차량 운행 로그 삭제",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "차량 운행 로그 trip_id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1720,7 +1990,7 @@
                 "region_id": {
                     "type": "string"
                 },
-                "registration_time": {
+                "registered_at": {
                     "description": "RFC3339",
                     "type": "string"
                 },
@@ -1830,6 +2100,32 @@
                 }
             }
         },
+        "dto.CreateTripLogRequest": {
+            "type": "object",
+            "required": [
+                "vehicle_id"
+            ],
+            "properties": {
+                "destination": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "description": "RFC3339 string",
+                    "type": "string"
+                },
+                "start_time": {
+                    "description": "RFC3339 string",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "\"운행중\" or \"비운행중\"",
+                    "type": "string"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.CreateVehicleRequest": {
             "type": "object",
             "required": [
@@ -1865,7 +2161,7 @@
                 "region_id": {
                     "type": "string"
                 },
-                "registration_time": {
+                "registered_at": {
                     "type": "string"
                 },
                 "second_transport_time": {
@@ -1979,6 +2275,29 @@
                 }
             }
         },
+        "dto.TripLogResponse": {
+            "type": "object",
+            "properties": {
+                "destination": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "integer"
+                },
+                "vehicle_id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.UpdateDeliveryLogRequest": {
             "type": "object",
             "properties": {
@@ -1994,7 +2313,7 @@
                 "load_order": {
                     "type": "integer"
                 },
-                "registration_time": {
+                "registered_at": {
                     "type": "string"
                 },
                 "second_transport_time": {
@@ -2073,6 +2392,23 @@
                     "type": "string"
                 },
                 "destination_3": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateTripLogRequest": {
+            "type": "object",
+            "properties": {
+                "destination": {
                     "type": "string"
                 },
                 "end_time": {
