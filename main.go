@@ -60,12 +60,12 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 
 	packageService := service.NewPackageService(db)
 	packageHandler := handlers.NewPackageHandler(packageService)
-	router.POST("/api/package", middleware.AuthRequired("관리직", "운송직"), packageHandler.CreatePackage)
-	router.GET("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.GetPackageByID)
-	router.PUT("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.UpdatePackage)
-	router.DELETE("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.DeletePackage)
-	router.GET("/api/package", middleware.AuthRequired("관리직", "운송직"), packageHandler.ListPackages)
-	router.GET("/api/package/search", middleware.AuthRequired("관리직", "운송직"), packageHandler.SearchPackages)
+	router.POST("/api/package", packageHandler.CreatePackage)
+	router.GET("/api/package/:id", packageHandler.GetPackageByID)
+	router.PUT("/api/package/:id", packageHandler.UpdatePackage)
+	router.DELETE("/api/package/:id", packageHandler.DeletePackage)
+	router.GET("/api/package", packageHandler.ListPackages)
+	router.GET("/api/package/search", packageHandler.SearchPackages)
 
 	vehicleService := service.NewVehicleService(db)
 	vehicleHandler := handlers.NewVehicleHandler(vehicleService)

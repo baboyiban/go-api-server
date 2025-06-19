@@ -16,7 +16,6 @@ func NewAuthHandler(s *service.AuthService) *AuthHandler {
 	return &AuthHandler{service: s}
 }
 
-// Login godoc
 // @Summary      로그인
 // @Description  직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 반환합니다.
 // @Tags         auth
@@ -33,10 +32,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "Invalid request"})
 		return
 	}
-	token, err := h.service.Login(c.Request.Context(), req)
+	token, emp, err := h.service.Login(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Invalid credentials"})
 		return
 	}
-	c.JSON(http.StatusOK, dto.LoginResponse{Token: token})
+	c.JSON(http.StatusOK, dto.LoginResponse{
+		Token: token,
+		Employee: dto.EmployeeResponse{
+			EmployeeID: emp.EmployeeID,
+			Position:   emp.Position,
+			IsActive:   emp.IsActive,
+		},
+	})
 }

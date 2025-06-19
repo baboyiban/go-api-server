@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ func AuthRequired(allowedPositions ...string) gin.HandlerFunc {
 			return
 		}
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
 			return jwtSecret, nil
 		})
 		if err != nil || !token.Valid {
@@ -33,11 +34,9 @@ func AuthRequired(allowedPositions ...string) gin.HandlerFunc {
 		// 권한 체크
 		userPosition := claims["position"].(string)
 		allowed := false
-		for _, pos := range allowedPositions {
-			if userPosition == pos {
-				allowed = true
-				break
-			}
+		if !slices.Contains(allowedPositions, userPosition) {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
+			return
 		}
 		if !allowed {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
