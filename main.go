@@ -5,6 +5,7 @@ import (
 	"os"
 
 	_ "github.com/baboyiban/go-api-server/docs"
+	"github.com/baboyiban/go-api-server/middleware"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -59,12 +60,12 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 
 	packageService := service.NewPackageService(db)
 	packageHandler := handlers.NewPackageHandler(packageService)
-	router.POST("/api/package", packageHandler.CreatePackage)
-	router.GET("/api/package/:id", packageHandler.GetPackageByID)
-	router.PUT("/api/package/:id", packageHandler.UpdatePackage)
-	router.DELETE("/api/package/:id", packageHandler.DeletePackage)
-	router.GET("/api/package", packageHandler.ListPackages)
-	router.GET("/api/package/search", packageHandler.SearchPackages)
+	router.POST("/api/package", middleware.AuthRequired("관리직", "운송직"), packageHandler.CreatePackage)
+	router.GET("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.GetPackageByID)
+	router.PUT("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.UpdatePackage)
+	router.DELETE("/api/package/:id", middleware.AuthRequired("관리직", "운송직"), packageHandler.DeletePackage)
+	router.GET("/api/package", middleware.AuthRequired("관리직", "운송직"), packageHandler.ListPackages)
+	router.GET("/api/package/search", middleware.AuthRequired("관리직", "운송직"), packageHandler.SearchPackages)
 
 	vehicleService := service.NewVehicleService(db)
 	vehicleHandler := handlers.NewVehicleHandler(vehicleService)
@@ -104,10 +105,15 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 
 	employeeService := service.NewEmployeeService(db)
 	employeeHandler := handlers.NewEmployeeHandler(employeeService)
-	router.POST("/api/employee", employeeHandler.CreateEmployee)
-	router.GET("/api/employee/:id", employeeHandler.GetEmployeeByID)
-	router.PUT("/api/employee/:id", employeeHandler.UpdateEmployee)
-	router.DELETE("/api/employee/:id", employeeHandler.DeleteEmployee)
-	router.GET("/api/employee", employeeHandler.ListEmployees)
-	router.GET("/api/employee/search", employeeHandler.SearchEmployees)
+	router.POST("/api/employee", middleware.AuthRequired("관리직"), employeeHandler.CreateEmployee)
+	router.GET("/api/employee/:id", middleware.AuthRequired("관리직"), employeeHandler.GetEmployeeByID)
+	router.PUT("/api/employee/:id", middleware.AuthRequired("관리직"), employeeHandler.UpdateEmployee)
+	router.DELETE("/api/employee/:id", middleware.AuthRequired("관리직"), employeeHandler.DeleteEmployee)
+	router.GET("/api/employee", middleware.AuthRequired("관리직"), employeeHandler.ListEmployees)
+	router.GET("/api/employee/search", middleware.AuthRequired("관리직"), employeeHandler.SearchEmployees)
+
+	// auth
+	authService := service.NewAuthService(db)
+	authHandler := handlers.NewAuthHandler(authService)
+	router.POST("/api/auth/login", authHandler.Login)
 }

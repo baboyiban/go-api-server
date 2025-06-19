@@ -5,6 +5,7 @@ import (
 
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/models"
+	"github.com/baboyiban/go-api-server/utils"
 	"gorm.io/gorm"
 )
 
@@ -49,8 +50,12 @@ func (s *EmployeeService) CreateEmployee(ctx context.Context, req dto.CreateEmpl
 	if req.IsActive != nil {
 		isActive = *req.IsActive
 	}
+	hash, err := utils.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
+	}
 	emp := models.Employee{
-		Password: req.Password,
+		Password: hash,
 		Position: req.Position,
 		IsActive: isActive,
 	}

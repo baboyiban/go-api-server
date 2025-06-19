@@ -160,6 +160,21 @@ definitions:
       error:
         type: string
     type: object
+  dto.LoginRequest:
+    properties:
+      employee_id:
+        type: integer
+      password:
+        type: string
+    required:
+    - employee_id
+    - password
+    type: object
+  dto.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
   dto.PackageResponse:
     properties:
       package_id:
@@ -346,6 +361,36 @@ info:
   title: Go API Server
   version: "1.0"
 paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 반환합니다.
+      parameters:
+      - description: 로그인 정보
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: 로그인
+      tags:
+      - auth
   /api/delivery-log:
     get:
       description: 모든 배송 로그 정보를 반환합니다.
