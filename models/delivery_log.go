@@ -6,7 +6,6 @@ import (
 
 type DeliveryLog struct {
 	TripID              int        `json:"trip_id" gorm:"column:trip_id;type:int;not null;"`
-	TripLog             TripLog    `json:"-" gorm:"foreignKey:TripID;references:TripID"`
 	PackageID           int        `json:"package_id" gorm:"column:package_id;type:int;not null"`
 	Package             Package    `json:"-" gorm:"foreignKey:PackageID;references:PackageID"`
 	RegionID            string     `json:"region_id" gorm:"column:region_id;type:char(3)"`

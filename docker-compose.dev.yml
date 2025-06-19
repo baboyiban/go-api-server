@@ -7,9 +7,9 @@ services:
     env_file: .env
     ports:
       - ${API_PORT}:${API_PORT}
-    # depends_on:
-    #   mysql:
-    #     condition: service_healthy
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - backend
     labels:

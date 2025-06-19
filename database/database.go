@@ -48,7 +48,8 @@ func autoMigrateAll(db *gorm.DB) {
 		&models.Vehicle{},
 		&models.Employee{},
 		&models.Package{},
-		&models.TripLog{},
+		&models.TripLogA{},
+		&models.TripLogB{},
 		&models.DeliveryLog{},
 	}
 

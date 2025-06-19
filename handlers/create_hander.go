@@ -43,7 +43,8 @@ func RegisterCreateHandlers(router *gin.Engine, db *gorm.DB) {
 	router.POST("/api/region", CreateHandler[models.Region](db))
 	router.POST("/api/package", CreateHandler[models.Package](db))
 	router.POST("/api/vehicle", CreateHandler[models.Vehicle](db))
-	router.POST("/api/trip_log", CreateHandler[models.TripLog](db))
+	router.POST("/api/trip-log-a", CreateHandler[models.TripLogA](db))
+	router.POST("/api/trip-log-b", CreateHandler[models.TripLogB](db))
 	router.POST("/api/delivery_log", CreateHandler[models.DeliveryLog](db))
 	router.POST("/api/employee", CreateHandler[models.Employee](db))
 }

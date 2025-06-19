@@ -38,7 +38,8 @@ func RegisterDeleteHandlers(router *gin.Engine, db *gorm.DB) {
 	router.DELETE("/api/region/:id", DeleteHandler[models.Region](db, "region_id"))
 	router.DELETE("/api/package/:id", DeleteHandler[models.Package](db, "package_id"))
 	router.DELETE("/api/vehicle/:id", DeleteHandler[models.Vehicle](db, "interal_id"))
-	router.DELETE("/api/trip_log/:id", DeleteHandler[models.TripLog](db, "trip_id"))
+	router.DELETE("/api/trip-log-a/:id", DeleteHandler[models.TripLogA](db, "trip_id"))
+	router.DELETE("/api/trip-log-b/:id", DeleteHandler[models.TripLogB](db, "trip_id"))
 	router.DELETE("/api/delivery_log/:id", DeleteHandler[models.DeliveryLog](db, "trip_id"))
 	router.DELETE("/api/employee/:id", DeleteHandler[models.Employee](db, "employee_id"))
 }

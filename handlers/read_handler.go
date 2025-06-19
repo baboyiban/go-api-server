@@ -118,7 +118,8 @@ func RegisterReadHandlers(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/region", GetAllHandler[models.Region](db))
 	router.GET("/api/package", GetAllHandler[models.Package](db))
 	router.GET("/api/vehicle", GetAllHandler[models.Vehicle](db))
-	router.GET("/api/trip_log", GetAllHandler[models.TripLog](db))
+	router.GET("/api/trip-log-a", GetAllHandler[models.TripLogA](db))
+	router.GET("/api/trip-log-b", GetAllHandler[models.TripLogB](db))
 	router.GET("/api/delivery_log", GetAllHandler[models.DeliveryLog](db))
 	router.GET("/api/employee", GetAllHandler[models.Employee](db))
 
@@ -126,7 +127,8 @@ func RegisterReadHandlers(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/region/:id", GetByIDHandler[models.Region](db, "region_id"))
 	router.GET("/api/package/:id", GetByIDHandler[models.Package](db, "package_id"))
 	router.GET("/api/vehicle/:id", GetByIDHandler[models.Vehicle](db, "internal_id"))
-	router.GET("/api/trip_log/:id", GetByIDHandler[models.TripLog](db, "trip_id"))
+	router.GET("/api/trip-log-a/:id", GetByIDHandler[models.TripLogA](db, "trip_id"))
+	router.GET("/api/trip-log-b/:id", GetByIDHandler[models.TripLogB](db, "trip_id"))
 	router.GET("/api/delivery_log/:id", GetByIDHandler[models.DeliveryLog](db, "trip_id"))
 	router.GET("/api/employee/:id", GetByIDHandler[models.Employee](db, "employee_id"))
 
@@ -158,12 +160,25 @@ func RegisterReadHandlers(router *gin.Engine, db *gorm.DB) {
 		"coord_x":            true,
 		"coord_y":            true,
 	}))
-	router.GET("/api/trip_log/search", GetByField[models.TripLog](db, map[string]bool{
-		"trip_id":    true,
-		"vehicle_id": true,
-		"start_time": true,
-		"end_time":   true,
-		"status":     true,
+	router.GET("/api/trip-log-a/search", GetByField[models.TripLogA](db, map[string]bool{
+		"trip_id":       true,
+		"vehicle_id":    true,
+		"start_time":    true,
+		"end_time":      true,
+		"status":        true,
+		"destination_1": true,
+		"destination_2": true,
+		"destination_3": true,
+	}))
+	router.GET("/api/trip-log-b/search", GetByField[models.TripLogA](db, map[string]bool{
+		"trip_id":       true,
+		"vehicle_id":    true,
+		"start_time":    true,
+		"end_time":      true,
+		"status":        true,
+		"destination_1": true,
+		"destination_2": true,
+		"destination_3": true,
 	}))
 	router.GET("/api/delivery_log/search", GetByField[models.DeliveryLog](db, map[string]bool{
 		"trip_id":               true,

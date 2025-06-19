@@ -42,7 +42,8 @@ func RegisterUpdateHandlers(router *gin.Engine, db *gorm.DB) {
 	router.PUT("/api/region/:id", UpdateHandler[models.Region](db, "region_id"))
 	router.PUT("/api/package/:id", UpdateHandler[models.Package](db, "package_id"))
 	router.PUT("/api/vehicle/:id", UpdateHandler[models.Vehicle](db, "internal_id"))
-	router.PUT("/api/trip_log/:id", UpdateHandler[models.TripLog](db, "trip_id"))
+	router.PUT("/api/trip-log-a/:id", UpdateHandler[models.TripLogA](db, "trip_id"))
+	router.PUT("/api/trip-log-b/:id", UpdateHandler[models.TripLogB](db, "trip_id"))
 	router.PUT("/api/delivery_log/:id", UpdateHandler[models.DeliveryLog](db, "trip_id"))
 	router.PUT("/api/employee/:id", UpdateHandler[models.Employee](db, "employee_id"))
 }
