@@ -116,4 +116,5 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	authService := service.NewAuthService(db)
 	authHandler := handlers.NewAuthHandler(authService)
 	router.POST("/api/auth/login", authHandler.Login)
+	router.GET("/api/auth/me", authHandler.Me)
 }

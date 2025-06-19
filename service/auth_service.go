@@ -14,6 +14,10 @@ type AuthService struct {
 	db *gorm.DB
 }
 
+func (s *AuthService) DB() *gorm.DB {
+	return s.db
+}
+
 func NewAuthService(db *gorm.DB) *AuthService {
 	return &AuthService{db: db}
 }

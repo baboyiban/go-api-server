@@ -61,6 +61,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/auth/me": {
+            "get": {
+                "description": "JWT 토큰을 이용해 로그인한 직원의 정보를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "내 정보 조회",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EmployeeResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delivery-log": {
             "get": {
                 "description": "모든 배송 로그 정보를 반환합니다.",
@@ -2267,6 +2293,9 @@ const docTemplate = `{
         "dto.LoginResponse": {
             "type": "object",
             "properties": {
+                "employee": {
+                    "$ref": "#/definitions/dto.EmployeeResponse"
+                },
                 "token": {
                     "type": "string"
                 }

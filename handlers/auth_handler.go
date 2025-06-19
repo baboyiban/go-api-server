@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/baboyiban/go-api-server/dto"
+	"github.com/baboyiban/go-api-server/models"
 	"github.com/baboyiban/go-api-server/service"
+	"github.com/baboyiban/go-api-server/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,5 +46,41 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			Position:   emp.Position,
 			IsActive:   emp.IsActive,
 		},
+	})
+}
+
+// @Summary      내 정보 조회
+// @Description  JWT 토큰을 이용해 로그인한 직원의 정보를 반환합니다.
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  dto.EmployeeResponse
+// @Failure      401  {object}  dto.ErrorResponse
+// @Router       /api/auth/me [get]
+func (h *AuthHandler) Me(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	if len(authHeader) < 8 || authHeader[:7] != "Bearer " {
+		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Missing or invalid token"})
+		return
+	}
+	tokenStr := authHeader[7:]
+	claims, err := utils.ParseJWT(tokenStr)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Invalid token"})
+		return
+	}
+	employeeID, ok := claims["employee_id"].(float64)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Invalid token claims"})
+		return
+	}
+	var emp models.Employee
+	if err := h.service.DB().Where("employee_id = ?", int(employeeID)).First(&emp).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, dto.EmployeeResponse{
+		EmployeeID: emp.EmployeeID,
+		Position:   emp.Position,
+		IsActive:   emp.IsActive,
 	})
 }
