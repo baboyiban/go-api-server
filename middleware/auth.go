@@ -33,12 +33,7 @@ func AuthRequired(allowedPositions ...string) gin.HandlerFunc {
 		}
 		// 권한 체크
 		userPosition := claims["position"].(string)
-		allowed := false
-		if !slices.Contains(allowedPositions, userPosition) {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
-			return
-		}
-		if !allowed {
+		if len(allowedPositions) > 0 && !slices.Contains(allowedPositions, userPosition) {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
 			return
 		}
