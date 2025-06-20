@@ -2,7 +2,7 @@ package dto
 
 type CreatePackageRequest struct {
 	PackageType   string `json:"package_type" binding:"required"`
-	RegionID      string `json:"region_id" binding:"required,len=3"`
+	RegionID      string `json:"region_id" binding:"required"`
 	PackageStatus string `json:"package_status"`
 }
 
