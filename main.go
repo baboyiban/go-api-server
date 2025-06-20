@@ -14,6 +14,7 @@ import (
 
 	"github.com/baboyiban/go-api-server/database"
 	"github.com/baboyiban/go-api-server/handlers"
+	"github.com/gin-contrib/cors"
 )
 
 // @title           Go API Server
@@ -28,6 +29,16 @@ func main() {
 
 	db := database.InitDB()
 	router := gin.Default()
+
+	// CORS 미들웨어 추가
+	router.Use(cors.New(cors.Config{
+		// AllowOrigins:     []string{"https://choidaruhan.xyz", "https://api.choidaruhan.xyz"}, // (배포용)
+		AllowOrigins:     []string{"*"}, // (테스트용)
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
