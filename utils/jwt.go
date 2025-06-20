@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateJWT(employeeID int, position string) (string, error) {
 	claims := jwt.MapClaims{
@@ -17,12 +17,12 @@ func GenerateJWT(employeeID int, position string) (string, error) {
 		"exp":         time.Now().Add(8 * time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString(JwtSecret)
 }
 
 func ParseJWT(tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
-		return jwtSecret, nil
+		return JwtSecret, nil
 	})
 	if err != nil || !token.Valid {
 		return nil, err

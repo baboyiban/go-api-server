@@ -5,11 +5,12 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/baboyiban/go-api-server/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("your-secret-key")
+var jwtSecret = utils.JwtSecret
 
 func AuthRequired(allowedPositions ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
