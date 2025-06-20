@@ -43,16 +43,20 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// JWT를 HttpOnly Secure 쿠키로 설정
-	c.SetCookie(
-		"token",
-		token,
-		60*60*8, // 8시간
-		"/",
-		"",   // 도메인 (필요시 지정)
-		true, // Secure (운영환경에서는 true, 개발환경에서는 false 가능)
-		true, // HttpOnly
-	)
+	// SameSite 속성 설정 - 이 부분을 추가해야 합니다
+	// c.SetSameSite(http.SameSiteNoneMode) // 크로스 도메인 요청을 위해 None으로 설정
+
+	// domain := os.Getenv("DOMAIN")
+	// // JWT를 HttpOnly Secure 쿠키로 설정
+	// c.SetCookie(
+	// 	"token",
+	// 	token,
+	// 	60*60*8, // 8시간
+	// 	"/",
+	// 	domain, // 도메인 (필요시 지정)
+	// 	true,   // Secure (운영환경에서는 true, 개발환경에서는 false 가능)
+	// 	true,   // HttpOnly
+	// )
 
 	c.JSON(http.StatusOK, dto.LoginResponse{
 		Token: token, // 필요 없다면 바디에서 제거해도 됨
@@ -74,7 +78,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 // @Router       /api/auth/me [get]
 func (h *AuthHandler) Me(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
-	log.Println("Authorization 헤더:", authHeader)
+	log.Println("Authorization:", authHeader)
 
 	var tokenStr string
 
@@ -83,6 +87,8 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	} else {
 		// 쿠키에서 토큰 시도
 		cookie, err := c.Cookie("token")
+		log.Println("token:", cookie)
+
 		if err != nil || cookie == "" {
 			c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Missing or invalid token"})
 			return

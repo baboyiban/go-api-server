@@ -15,9 +15,11 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api.loadbalancer.server.port=${API_PORT}"
-      - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=http://localhost:3000" # 디버깅 용
+      # - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=${DOMAIN}"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.api-cors.headers.accesscontrolmaxage=100"
       - "traefik.http.routers.api.middlewares=api-cors@docker"
   traefik:
     image: traefik:v3.4

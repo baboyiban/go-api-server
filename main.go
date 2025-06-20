@@ -32,8 +32,8 @@ func main() {
 
 	// CORS 미들웨어 추가
 	router.Use(cors.New(cors.Config{
-		// AllowOrigins:     []string{"https://choidaruhan.xyz", "https://api.choidaruhan.xyz"}, // (배포용)
-		AllowOrigins:     []string{"*"}, // (테스트용)
+		// AllowOrigins:     []string{"https://choidaruhan.xyz"}, // (배포용)
+		AllowOrigins:     []string{"http://localhost:3000"}, // (테스트용)
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
