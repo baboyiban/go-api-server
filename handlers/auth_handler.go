@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/baboyiban/go-api-server/dto"
@@ -73,6 +74,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 // @Router       /api/auth/me [get]
 func (h *AuthHandler) Me(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
+	log.Println("Authorization 헤더:", authHeader)
+
 	var tokenStr string
 
 	if len(authHeader) >= 8 && authHeader[:7] == "Bearer " {

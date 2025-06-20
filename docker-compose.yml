@@ -10,15 +10,13 @@ services:
     networks:
       - backend
     labels:
-      # Traefik 라우팅 설정
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
-      # 아래 미들웨어 추가
+      - "traefik.http.services.api.loadbalancer.server.port=3000"
       - "traefik.http.middlewares.api-headers.headers.customrequestheaders.Authorization="
       - "traefik.http.routers.api.middlewares=api-headers@docker"
-
   traefik:
     image: traefik:v3.4
     container_name: traefik
