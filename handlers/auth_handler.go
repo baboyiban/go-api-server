@@ -10,21 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AuthHandler handles authentication-related endpoints
 type AuthHandler struct {
 	service *service.AuthService
 }
 
+// NewAuthHandler creates a new AuthHandler
 func NewAuthHandler(s *service.AuthService) *AuthHandler {
 	return &AuthHandler{service: s}
 }
 
 // @Summary      로그인
-// @Description  직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 반환합니다.
+// @Description  직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 HttpOnly Secure 쿠키로 반환합니다.
 // @Tags         auth
 // @Accept       json
 // @Produce      json
 // @Param        login  body      dto.LoginRequest  true  "로그인 정보"
-// @Success      200    {object}  dto.LoginResponse
+// @Success      200    {object}  dto.LoginResponse "JWT 토큰이 HttpOnly Secure 쿠키(token)로도 반환됨"
 // @Failure      400    {object}  dto.ErrorResponse
 // @Failure      401    {object}  dto.ErrorResponse
 // @Router       /api/auth/login [post]
@@ -39,8 +41,20 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Invalid credentials"})
 		return
 	}
+
+	// JWT를 HttpOnly Secure 쿠키로 설정
+	c.SetCookie(
+		"token",
+		token,
+		60*60*8, // 8시간
+		"/",
+		"",   // 도메인 (필요시 지정)
+		true, // Secure (운영환경에서는 true, 개발환경에서는 false 가능)
+		true, // HttpOnly
+	)
+
 	c.JSON(http.StatusOK, dto.LoginResponse{
-		Token: token,
+		Token: token, // 필요 없다면 바디에서 제거해도 됨
 		Employee: dto.EmployeeResponse{
 			EmployeeID: emp.EmployeeID,
 			Position:   emp.Position,
@@ -50,19 +64,29 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 // @Summary      내 정보 조회
-// @Description  JWT 토큰을 이용해 로그인한 직원의 정보를 반환합니다.
+// @Description  JWT 토큰을 Authorization 헤더 또는 HttpOnly 쿠키(token)로 전달하여 로그인한 직원의 정보를 반환합니다.
 // @Tags         auth
 // @Produce      json
 // @Success      200  {object}  dto.EmployeeResponse
 // @Failure      401  {object}  dto.ErrorResponse
+// @Security     ApiKeyAuth
 // @Router       /api/auth/me [get]
 func (h *AuthHandler) Me(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
-	if len(authHeader) < 8 || authHeader[:7] != "Bearer " {
-		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Missing or invalid token"})
-		return
+	var tokenStr string
+
+	if len(authHeader) >= 8 && authHeader[:7] == "Bearer " {
+		tokenStr = authHeader[7:]
+	} else {
+		// 쿠키에서 토큰 시도
+		cookie, err := c.Cookie("token")
+		if err != nil || cookie == "" {
+			c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Missing or invalid token"})
+			return
+		}
+		tokenStr = cookie
 	}
-	tokenStr := authHeader[7:]
+
 	claims, err := utils.ParseJWT(tokenStr)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{Error: "Invalid token"})
