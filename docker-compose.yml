@@ -12,9 +12,12 @@ services:
     labels:
       # Traefik 라우팅 설정
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+      - "traefik.http.routers.api.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
+      # 아래 미들웨어 추가
+      - "traefik.http.middlewares.api-headers.headers.customrequestheaders.Authorization="
+      - "traefik.http.routers.api.middlewares=api-headers@docker"
 
   traefik:
     image: traefik:v3.4
