@@ -11,17 +11,14 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.api.rule=Host(`api.choidaruhan.xyz`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api.loadbalancer.server.port=3000"
-      # CORS 미들웨어
       - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowheaders=*"
-      # Authorization 헤더 전달 미들웨어 (이게 핵심!)
       - "traefik.http.middlewares.api-headers.headers.customrequestheaders.Authorization="
-      # 미들웨어 연결 (여러 개는 콤마로 연결)
       - "traefik.http.routers.api.middlewares=api-cors@docker,api-headers@docker"
   traefik:
     image: traefik:v3.4
@@ -38,7 +35,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     env_file: .env
     command:
-      # - "--log.level=DEBUG" # 디버그 모드
+      - "--log.level=DEBUG" # 디버그 모드
       # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # 디버그 모드
       - "--api.insecure=true"
       - "--providers.docker=true"
