@@ -15,13 +15,13 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api.loadbalancer.server.port=3000"
-      # CORS/헤더 미들웨어 예시
+      # CORS 미들웨어
       - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=*"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.routers.api.middlewares=api-cors@docker"
-      # 추가
+      # Authorization 헤더 전달 미들웨어 (이게 핵심!)
       - "traefik.http.middlewares.api-headers.headers.customrequestheaders.Authorization="
+      # 미들웨어 연결 (여러 개는 콤마로 연결)
       - "traefik.http.routers.api.middlewares=api-cors@docker,api-headers@docker"
   traefik:
     image: traefik:v3.4
