@@ -22,9 +22,6 @@ services:
       - "traefik.http.middlewares.api-cors.headers.accesscontrolmaxage=100"
       - "traefik.http.routers.api.middlewares=api-cors@docker"
 
-volumes:
-  data:
-
 networks:
   backend:
     driver: bridge
