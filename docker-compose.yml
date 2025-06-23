@@ -15,38 +15,12 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api.loadbalancer.server.port=${API_PORT}"
-      - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=http://localhost:3000" # 디버깅 용
-      # - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=${DOMAIN}"
+      # - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=http://localhost:3000" # 디버깅 용
+      - "traefik.http.middlewares.api-cors.headers.accesscontrolalloworiginlist=${FRONTEND_URL}"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.api-cors.headers.accesscontrolmaxage=100"
       - "traefik.http.routers.api.middlewares=api-cors@docker"
-  traefik:
-    image: traefik:v3.4
-    container_name: traefik
-    platform: linux/amd64
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
-    networks:
-      - backend
-    volumes:
-      - "./letsencrypt:/letsencrypt"
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    env_file: .env
-    command:
-      # - "--log.level=DEBUG" # 디버그 모드
-      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # 디버그 모드
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entryPoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=${EMAIL}"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--entryPoints.web.address=:80"
-      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
 
 volumes:
   data:
