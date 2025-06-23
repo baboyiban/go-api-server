@@ -46,7 +46,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// SameSite 속성 설정 - 이 부분을 추가해야 합니다
 	// c.SetSameSite(http.SameSiteNoneMode) // 크로스 도메인 요청을 위해 None으로 설정
 
-	// domain := os.Getenv("DOMAIN")
+	// domain := os.Getenv("BACKEND_DOMAIN")
 	// // JWT를 HttpOnly Secure 쿠키로 설정
 	// c.SetCookie(
 	// 	"token",

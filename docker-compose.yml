@@ -6,7 +6,7 @@ services:
     build: .
     env_file: .env
     ports:
-      - ${API_PORT}:${API_PORT}
+      - ${BACKEND_PORT}:${BACKEND_PORT}
     networks:
       - backend
     labels:

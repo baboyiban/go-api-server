@@ -44,7 +44,7 @@ func main() {
 
 	registerRoutes(router, db)
 
-	port := getEnv("API_PORT", "8080")
+	port := getEnv("BACKEND_PORT", "8080")
 	addr := ":" + port
 	log.Printf("서버가 %s 포트에서 실행 중...", port)
 	if err := router.Run(addr); err != nil {
