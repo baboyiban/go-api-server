@@ -119,7 +119,11 @@ func (s *TripLogService) SearchTripLogs(ctx context.Context, params map[string]s
 	var trips []models.TripLog
 	query := s.db.WithContext(ctx).Model(&models.TripLog{})
 	for k, v := range params {
-		query = query.Where(k+" = ?", v)
+		if k == "start_time" || k == "end_time" {
+			query = query.Where("DATE("+k+") = ?", v)
+		} else {
+			query = query.Where(k+" = ?", v)
+		}
 	}
 	query = applyTripLogSort(query, sort)
 	if err := query.Find(&trips).Error; err != nil {

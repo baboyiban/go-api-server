@@ -160,15 +160,16 @@ func (h *TripLogHandler) ListTripLogs(c *gin.Context) {
 // @Produce      json
 // @Param        trip_id        query     int     false  "trip_id"
 // @Param        vehicle_id     query     string  false  "차량 ID"
+// @Param        start_time     query     string  false  "출발 시각 (YYYY-MM-DD)"
+// @Param        end_time       query     string  false  "도착 시각 (YYYY-MM-DD)"
 // @Param        status         query     string  false  "상태"
 // @Param        destination    query     string  false  "목적지"
 // @Param        sort           query     string  false  "정렬 필드 (예: -trip_id, -start_time 등)"
 // @Success      200  {array}   dto.TripLogResponse
-// @Failure      400  {object}  dto.ErrorResponse
 // @Router       /api/trip-log/search [get]
 func (h *TripLogHandler) SearchTripLogs(c *gin.Context) {
 	params := map[string]string{}
-	for _, key := range []string{"trip_id", "vehicle_id", "status", "destination"} {
+	for _, key := range []string{"trip_id", "vehicle_id", "status", "destination", "start_time", "end_time"} {
 		if v := c.Query(key); v != "" {
 			params[key] = v
 		}

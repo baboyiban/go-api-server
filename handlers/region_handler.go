@@ -152,10 +152,9 @@ func (h *RegionHandler) ListRegions(c *gin.Context) {
 // @Param        max_capacity     query     int     false  "최대 용량"
 // @Param        current_capacity query     int     false  "현재 용량"
 // @Param        is_full          query     bool    false  "포화 여부"
-// @Param        saturated_at     query     string  false  "포화 시각(RFC3339)"
+// @Param        saturated_at     query     string  false  "포화 시각 (YYYY-MM-DD)"
 // @Param        sort             query     string  false  "정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)"
 // @Success      200  {array}   dto.RegionResponse
-// @Failure      400  {object}  dto.ErrorResponse
 // @Router       /api/region/search [get]
 func (h *RegionHandler) SearchRegions(c *gin.Context) {
 	params := map[string]string{}

@@ -122,7 +122,11 @@ func (s *RegionService) SearchRegions(ctx context.Context, params map[string]str
 	var regions []models.Region
 	query := s.db.WithContext(ctx).Model(&models.Region{})
 	for k, v := range params {
-		query = query.Where(k+" = ?", v)
+		if k == "saturated_at" {
+			query = query.Where("DATE("+k+") = ?", v)
+		} else {
+			query = query.Where(k+" = ?", v)
+		}
 	}
 	query = applyRegionSort(query, sort)
 	if err := query.Find(&regions).Error; err != nil {

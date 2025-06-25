@@ -111,7 +111,11 @@ func (s *PackageService) SearchPackages(ctx context.Context, params map[string]s
 	var pkgs []models.Package
 	query := s.db.WithContext(ctx).Model(&models.Package{})
 	for k, v := range params {
-		query = query.Where(k+" = ?", v)
+		if k == "registered_at" {
+			query = query.Where("DATE("+k+") = ?", v)
+		} else {
+			query = query.Where(k+" = ?", v)
+		}
 	}
 	query = applyPackageSort(query, sort)
 	if err := query.Find(&pkgs).Error; err != nil {

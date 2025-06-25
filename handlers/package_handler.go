@@ -162,10 +162,9 @@ func (h *PackageHandler) ListPackages(c *gin.Context) {
 // @Param        package_type   query     string  false  "패키지 타입"
 // @Param        region_id      query     string  false  "지역 ID"
 // @Param        package_status query     string  false  "패키지 상태"
-// @Param        registered_at  query     string  false  "등록 시각(RFC3339)"
+// @Param        registered_at  query     string  false  "등록 시각 (YYYY-MM-DD)"
 // @Param        sort           query     string  false  "정렬 필드 (예: -registered_at, -package_id 등)"
 // @Success      200  {array}   dto.PackageResponse
-// @Failure      400  {object}  dto.ErrorResponse
 // @Router       /api/package/search [get]
 func (h *PackageHandler) SearchPackages(c *gin.Context) {
 	params := map[string]string{}

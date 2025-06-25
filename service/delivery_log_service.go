@@ -132,9 +132,23 @@ func (s *DeliveryLogService) ListDeliveryLogs(ctx context.Context, sort string) 
 func (s *DeliveryLogService) SearchDeliveryLogs(ctx context.Context, params map[string]string, sort string) ([]dto.DeliveryLogResponse, error) {
 	var logs []models.DeliveryLog
 	query := s.db.WithContext(ctx).Model(&models.DeliveryLog{})
-	for k, v := range params {
-		query = query.Where(k+" = ?", v)
+
+	dateFields := map[string]bool{
+		"registered_at":         true,
+		"first_transport_time":  true,
+		"input_time":            true,
+		"second_transport_time": true,
+		"completed_at":          true,
 	}
+
+	for k, v := range params {
+		if dateFields[k] {
+			query = query.Where("DATE("+k+") = ?", v)
+		} else {
+			query = query.Where(k+" = ?", v)
+		}
+	}
+
 	query = applyDeliveryLogSort(query, sort)
 	if err := query.Find(&logs).Error; err != nil {
 		return nil, err
