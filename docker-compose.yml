@@ -1,6 +1,5 @@
 services:
   api:
-    image: chl11wq12/kosta-2-api:v1.0.0
     container_name: api
     platform: linux/amd64
     build: .
