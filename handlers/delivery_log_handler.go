@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/baboyiban/go-api-server/constants"
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
@@ -45,11 +46,12 @@ func (h *DeliveryLogHandler) CreateDeliveryLog(c *gin.Context) {
 
 // GetDeliveryLogByID godoc
 // @Summary      배송 로그 단건 조회
-// @Description  trip_id로 배송 로그를 조회합니다.
+// @Description  delivery_log_id로 배송 로그를 조회합니다.
 // @Tags         delivery_log
 // @Produce      json
-// @Param        id   path      int  true  "배송 로그 trip_id"
+// @Param        id   path      int  true  "배송 로그 ID"
 // @Success      200  {object}  dto.DeliveryLogResponse
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/delivery-log/{id} [get]
@@ -73,11 +75,12 @@ func (h *DeliveryLogHandler) GetDeliveryLogByID(c *gin.Context) {
 
 // DeleteDeliveryLog godoc
 // @Summary      배송 로그 삭제
-// @Description  trip_id로 배송 로그를 삭제합니다.
+// @Description  delivery_log_id로 배송 로그를 삭제합니다.
 // @Tags         delivery_log
 // @Produce      json
-// @Param        id   path      int  true  "배송 로그 trip_id"
+// @Param        id   path      int  true  "배송 로그 ID"
 // @Success      204  "No Content"
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/delivery-log/{id} [delete]
@@ -101,11 +104,11 @@ func (h *DeliveryLogHandler) DeleteDeliveryLog(c *gin.Context) {
 
 // UpdateDeliveryLog godoc
 // @Summary      배송 로그 정보 수정
-// @Description  trip_id로 배송 로그 정보를 수정합니다.
+// @Description  delivery_log_id로 배송 로그 정보를 수정합니다.
 // @Tags         delivery_log
 // @Accept       json
 // @Produce      json
-// @Param        id           path      int                          true  "배송 로그 trip_id"
+// @Param        id           path      int                          true  "배송 로그 ID"
 // @Param        delivery_log body      dto.UpdateDeliveryLogRequest true  "수정할 배송 로그 정보"
 // @Success      200          {object}  dto.DeliveryLogResponse
 // @Failure      400          {object}  dto.ErrorResponse
@@ -140,7 +143,7 @@ func (h *DeliveryLogHandler) UpdateDeliveryLog(c *gin.Context) {
 // @Description  모든 배송 로그 정보를 반환합니다.
 // @Tags         delivery_log
 // @Produce      json
-// @Param        sort  query     string  false  "정렬 필드 (예: -registration_time, -trip_id 등)"
+// @Param        sort  query     string  false  "정렬 필드"
 // @Success      200   {array}   dto.DeliveryLogResponse
 // @Router       /api/delivery-log [get]
 func (h *DeliveryLogHandler) ListDeliveryLogs(c *gin.Context) {
@@ -158,30 +161,13 @@ func (h *DeliveryLogHandler) ListDeliveryLogs(c *gin.Context) {
 // @Description  쿼리 파라미터로 배송 로그를 검색합니다.
 // @Tags         delivery_log
 // @Produce      json
-// @Param        trip_id               query     int     false  "trip_id"
-// @Param        package_id            query     int     false  "package_id"
-// @Param        region_id             query     string  false  "region_id"
-// @Param        load_order            query     int     false  "load_order"
-// @Param        registered_at         query     string  false  "등록 시각 (YYYY-MM-DD)"
-// @Param        first_transport_time  query     string  false  "첫 운송 시각 (YYYY-MM-DD)"
-// @Param        input_time            query     string  false  "투입 시각 (YYYY-MM-DD)"
-// @Param        second_transport_time query     string  false  "두번째 운송 시각 (YYYY-MM-DD)"
-// @Param        completed_at          query     string  false  "완료 시각 (YYYY-MM-DD)"
-// @Param        sort                  query     string  false  "정렬 필드 (예: -registration_time, -trip_id 등)"
+// @Param        delivery_log_id  query     int     false  "배송 로그 ID"
+// @Param        status           query     string  false  "상태"
+// @Param        sort             query     string  false  "정렬 필드"
 // @Success      200  {array}   dto.DeliveryLogResponse
 // @Router       /api/delivery-log/search [get]
 func (h *DeliveryLogHandler) SearchDeliveryLogs(c *gin.Context) {
-	params := map[string]string{}
-	allFields := []string{
-		"trip_id", "package_id", "region_id", "load_order",
-		"registered_at", "first_transport_time", "input_time",
-		"second_transport_time", "completed_at",
-	}
-	for _, key := range allFields {
-		if v := c.Query(key); v != "" {
-			params[key] = v
-		}
-	}
+	params := dto.ExtractAllowedParams(c.Request.URL.Query(), constants.DeliveryLogAllowedFields)
 	sortParam := c.Query("sort")
 	logs, err := h.service.SearchDeliveryLogs(c.Request.Context(), params, sortParam)
 	if err != nil {

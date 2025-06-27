@@ -1,15 +1,18 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
+	"github.com/baboyiban/go-api-server/constants"
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
+// EmployeeHandler handles employee-related endpoints
 type EmployeeHandler struct {
 	service *service.EmployeeService
 }
@@ -45,11 +48,12 @@ func (h *EmployeeHandler) CreateEmployee(c *gin.Context) {
 
 // GetEmployeeByID godoc
 // @Summary      직원 단건 조회
-// @Description  직원 ID로 직원 정보를 조회합니다.
+// @Description  employee_id로 직원을 조회합니다.
 // @Tags         employee
 // @Produce      json
 // @Param        id   path      int  true  "직원 ID"
 // @Success      200  {object}  dto.EmployeeResponse
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/employee/{id} [get]
@@ -60,12 +64,12 @@ func (h *EmployeeHandler) GetEmployeeByID(c *gin.Context) {
 		return
 	}
 	emp, err := h.service.GetEmployeeByID(c.Request.Context(), id)
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to get employee", Details: err.Error()})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to get employee", Details: err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, emp)
@@ -73,11 +77,12 @@ func (h *EmployeeHandler) GetEmployeeByID(c *gin.Context) {
 
 // DeleteEmployee godoc
 // @Summary      직원 삭제
-// @Description  직원 ID로 직원을 삭제합니다.
+// @Description  employee_id로 직원을 삭제합니다.
 // @Tags         employee
 // @Produce      json
 // @Param        id   path      int  true  "직원 ID"
 // @Success      204  "No Content"
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/employee/{id} [delete]
@@ -88,12 +93,12 @@ func (h *EmployeeHandler) DeleteEmployee(c *gin.Context) {
 		return
 	}
 	err = h.service.DeleteEmployee(c.Request.Context(), id)
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to delete employee", Details: err.Error()})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to delete employee", Details: err.Error()})
+		}
 		return
 	}
 	c.Status(http.StatusNoContent)
@@ -101,16 +106,16 @@ func (h *EmployeeHandler) DeleteEmployee(c *gin.Context) {
 
 // UpdateEmployee godoc
 // @Summary      직원 정보 수정
-// @Description  직원 ID로 직원 정보를 수정합니다.
+// @Description  employee_id로 직원 정보를 수정합니다.
 // @Tags         employee
 // @Accept       json
 // @Produce      json
-// @Param        id       path      int                      true  "직원 ID"
-// @Param        employee body      dto.UpdateEmployeeRequest true  "수정할 직원 정보"
-// @Success      200      {object}  dto.EmployeeResponse
-// @Failure      400      {object}  dto.ErrorResponse
-// @Failure      404      {object}  dto.ErrorResponse
-// @Failure      500      {object}  dto.ErrorResponse
+// @Param        id        path      int                      true  "직원 ID"
+// @Param        employee  body      dto.UpdateEmployeeRequest true  "수정할 직원 정보"
+// @Success      200       {object}  dto.EmployeeResponse
+// @Failure      400       {object}  dto.ErrorResponse
+// @Failure      404       {object}  dto.ErrorResponse
+// @Failure      500       {object}  dto.ErrorResponse
 // @Router       /api/employee/{id} [put]
 func (h *EmployeeHandler) UpdateEmployee(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -124,12 +129,12 @@ func (h *EmployeeHandler) UpdateEmployee(c *gin.Context) {
 		return
 	}
 	emp, err := h.service.UpdateEmployee(c.Request.Context(), id, req)
-	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
-		return
-	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to update employee", Details: err.Error()})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "Employee not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Failed to update employee", Details: err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, emp)
@@ -140,7 +145,7 @@ func (h *EmployeeHandler) UpdateEmployee(c *gin.Context) {
 // @Description  모든 직원 정보를 반환합니다.
 // @Tags         employee
 // @Produce      json
-// @Param        sort  query     string  false  "정렬 필드 (예: -employee_id, -position 등)"
+// @Param        sort  query     string  false  "정렬 필드 (예: -employee_id 등)"
 // @Success      200   {array}   dto.EmployeeResponse
 // @Router       /api/employee [get]
 func (h *EmployeeHandler) ListEmployees(c *gin.Context) {
@@ -159,19 +164,14 @@ func (h *EmployeeHandler) ListEmployees(c *gin.Context) {
 // @Tags         employee
 // @Produce      json
 // @Param        employee_id  query     int     false  "직원 ID"
+// @Param        name         query     string  false  "이름"
 // @Param        position     query     string  false  "직책"
 // @Param        is_active    query     bool    false  "활성 여부"
-// @Param        sort         query     string  false  "정렬 필드 (예: -employee_id, -position 등)"
+// @Param        sort         query     string  false  "정렬 필드"
 // @Success      200  {array}   dto.EmployeeResponse
-// @Failure      400  {object}  dto.ErrorResponse
 // @Router       /api/employee/search [get]
 func (h *EmployeeHandler) SearchEmployees(c *gin.Context) {
-	params := map[string]string{}
-	for _, key := range []string{"employee_id", "position", "is_active"} {
-		if v := c.Query(key); v != "" {
-			params[key] = v
-		}
-	}
+	params := dto.ExtractAllowedParams(c.Request.URL.Query(), constants.EmployeeAllowedFields)
 	sortParam := c.Query("sort")
 	emps, err := h.service.SearchEmployees(c.Request.Context(), params, sortParam)
 	if err != nil {

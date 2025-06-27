@@ -1,5 +1,10 @@
 package dto
 
+import (
+	"github.com/baboyiban/go-api-server/models"
+	"github.com/baboyiban/go-api-server/utils"
+)
+
 type CreateTripLogRequest struct {
 	VehicleID   string  `json:"vehicle_id" binding:"required"`
 	StartTime   *string `json:"start_time"` // RFC3339 string
@@ -22,4 +27,15 @@ type TripLogResponse struct {
 	EndTime     *string `json:"end_time"`
 	Status      string  `json:"status"`
 	Destination *string `json:"destination"`
+}
+
+func ToTripLogResponse(v *models.TripLog) TripLogResponse {
+	return TripLogResponse{
+		TripID:      v.TripID,
+		VehicleID:   v.VehicleID,
+		StartTime:   utils.FormatTimePtr(v.StartTime),
+		EndTime:     utils.FormatTimePtr(v.EndTime),
+		Status:      v.Status,
+		Destination: v.Destination,
+	}
 }

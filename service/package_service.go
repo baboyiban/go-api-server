@@ -46,7 +46,7 @@ func NewPackageService(db *gorm.DB) *PackageService {
 	return &PackageService{db: db}
 }
 
-func (s *PackageService) CreatePackage(ctx context.Context, req dto.CreatePackageRequest) (*models.Package, error) {
+func (s *PackageService) CreatePackage(ctx context.Context, req dto.CreatePackageRequest) (*dto.PackageResponse, error) {
 	pkg := models.Package{
 		PackageType:   req.PackageType,
 		RegionID:      req.RegionID,
@@ -55,15 +55,17 @@ func (s *PackageService) CreatePackage(ctx context.Context, req dto.CreatePackag
 	if err := s.db.WithContext(ctx).Create(&pkg).Error; err != nil {
 		return nil, err
 	}
-	return &pkg, nil
+	resp := dto.ToPackageResponse(&pkg)
+	return &resp, nil
 }
 
-func (s *PackageService) GetPackageByID(ctx context.Context, id int) (*models.Package, error) {
+func (s *PackageService) GetPackageByID(ctx context.Context, id int) (*dto.PackageResponse, error) {
 	var pkg models.Package
 	if err := s.db.WithContext(ctx).Where("package_id = ?", id).First(&pkg).Error; err != nil {
 		return nil, err
 	}
-	return &pkg, nil
+	resp := dto.ToPackageResponse(&pkg)
+	return &resp, nil
 }
 
 func (s *PackageService) DeletePackage(ctx context.Context, id int) error {
@@ -77,7 +79,7 @@ func (s *PackageService) DeletePackage(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *PackageService) UpdatePackage(ctx context.Context, id int, req dto.UpdatePackageRequest) (*models.Package, error) {
+func (s *PackageService) UpdatePackage(ctx context.Context, id int, req dto.UpdatePackageRequest) (*dto.PackageResponse, error) {
 	var pkg models.Package
 	if err := s.db.WithContext(ctx).Where("package_id = ?", id).First(&pkg).Error; err != nil {
 		return nil, err
@@ -94,20 +96,25 @@ func (s *PackageService) UpdatePackage(ctx context.Context, id int, req dto.Upda
 	if err := s.db.WithContext(ctx).Save(&pkg).Error; err != nil {
 		return nil, err
 	}
-	return &pkg, nil
+	resp := dto.ToPackageResponse(&pkg)
+	return &resp, nil
 }
 
-func (s *PackageService) ListPackages(ctx context.Context, sort string) ([]models.Package, error) {
+func (s *PackageService) ListPackages(ctx context.Context, sort string) ([]dto.PackageResponse, error) {
 	var pkgs []models.Package
 	query := s.db.WithContext(ctx).Model(&models.Package{})
 	query = applyPackageSort(query, sort)
 	if err := query.Find(&pkgs).Error; err != nil {
 		return nil, err
 	}
-	return pkgs, nil
+	res := make([]dto.PackageResponse, 0, len(pkgs))
+	for i := range pkgs {
+		res = append(res, dto.ToPackageResponse(&pkgs[i]))
+	}
+	return res, nil
 }
 
-func (s *PackageService) SearchPackages(ctx context.Context, params map[string]string, sort string) ([]models.Package, error) {
+func (s *PackageService) SearchPackages(ctx context.Context, params map[string]string, sort string) ([]dto.PackageResponse, error) {
 	var pkgs []models.Package
 	query := s.db.WithContext(ctx).Model(&models.Package{})
 	for k, v := range params {
@@ -121,5 +128,9 @@ func (s *PackageService) SearchPackages(ctx context.Context, params map[string]s
 	if err := query.Find(&pkgs).Error; err != nil {
 		return nil, err
 	}
-	return pkgs, nil
+	res := make([]dto.PackageResponse, 0, len(pkgs))
+	for i := range pkgs {
+		res = append(res, dto.ToPackageResponse(&pkgs[i]))
+	}
+	return res, nil
 }

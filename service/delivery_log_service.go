@@ -72,7 +72,8 @@ func (s *DeliveryLogService) CreateDeliveryLog(ctx context.Context, req dto.Crea
 	if err := s.db.WithContext(ctx).Create(&log).Error; err != nil {
 		return nil, err
 	}
-	return toDeliveryLogResponse(&log), nil
+	resp := dto.ToDeliveryLogResponse(&log)
+	return &resp, nil
 }
 
 func (s *DeliveryLogService) GetDeliveryLogByID(ctx context.Context, tripID int) (*dto.DeliveryLogResponse, error) {
@@ -80,7 +81,8 @@ func (s *DeliveryLogService) GetDeliveryLogByID(ctx context.Context, tripID int)
 	if err := s.db.WithContext(ctx).Where("trip_id = ?", tripID).First(&log).Error; err != nil {
 		return nil, err
 	}
-	return toDeliveryLogResponse(&log), nil
+	resp := dto.ToDeliveryLogResponse(&log)
+	return &resp, nil
 }
 
 func (s *DeliveryLogService) DeleteDeliveryLog(ctx context.Context, tripID int) error {
@@ -112,7 +114,8 @@ func (s *DeliveryLogService) UpdateDeliveryLog(ctx context.Context, tripID int, 
 	if err := s.db.WithContext(ctx).Save(&log).Error; err != nil {
 		return nil, err
 	}
-	return toDeliveryLogResponse(&log), nil
+	resp := dto.ToDeliveryLogResponse(&log)
+	return &resp, nil
 }
 
 func (s *DeliveryLogService) ListDeliveryLogs(ctx context.Context, sort string) ([]dto.DeliveryLogResponse, error) {
@@ -122,9 +125,9 @@ func (s *DeliveryLogService) ListDeliveryLogs(ctx context.Context, sort string) 
 	if err := query.Find(&logs).Error; err != nil {
 		return nil, err
 	}
-	var res []dto.DeliveryLogResponse
-	for _, l := range logs {
-		res = append(res, *toDeliveryLogResponse(&l))
+	res := make([]dto.DeliveryLogResponse, 0, len(logs))
+	for i := range logs {
+		res = append(res, dto.ToDeliveryLogResponse(&logs[i]))
 	}
 	return res, nil
 }
@@ -153,23 +156,9 @@ func (s *DeliveryLogService) SearchDeliveryLogs(ctx context.Context, params map[
 	if err := query.Find(&logs).Error; err != nil {
 		return nil, err
 	}
-	var res []dto.DeliveryLogResponse
-	for _, l := range logs {
-		res = append(res, *toDeliveryLogResponse(&l))
+	res := make([]dto.DeliveryLogResponse, 0, len(logs))
+	for i := range logs {
+		res = append(res, dto.ToDeliveryLogResponse(&logs[i]))
 	}
 	return res, nil
-}
-
-func toDeliveryLogResponse(m *models.DeliveryLog) *dto.DeliveryLogResponse {
-	return &dto.DeliveryLogResponse{
-		TripID:              m.TripID,
-		PackageID:           m.PackageID,
-		RegionID:            m.RegionID,
-		LoadOrder:           m.LoadOrder,
-		RegisteredAt:        utils.FormatTimePtr(&m.RegisteredAt),
-		FirstTransportTime:  utils.FormatTimePtr(m.FirstTransportTime),
-		InputTime:           utils.FormatTimePtr(m.InputTime),
-		SecondTransportTime: utils.FormatTimePtr(m.SecondTransportTime),
-		CompletedAt:         utils.FormatTimePtr(m.CompletedAt),
-	}
 }

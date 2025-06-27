@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/baboyiban/go-api-server/constants"
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
@@ -45,11 +46,12 @@ func (h *VehicleHandler) CreateVehicle(c *gin.Context) {
 
 // GetVehicleByID godoc
 // @Summary      차량 단건 조회
-// @Description  차량 ID로 차량 정보를 조회합니다.
+// @Description  vehicle_id로 차량을 조회합니다.
 // @Tags         vehicle
 // @Produce      json
-// @Param        id   path      int  true  "차량 Internal ID"
+// @Param        id   path      int  true  "차량 ID"
 // @Success      200  {object}  dto.VehicleResponse
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/vehicle/{id} [get]
@@ -73,11 +75,12 @@ func (h *VehicleHandler) GetVehicleByID(c *gin.Context) {
 
 // DeleteVehicle godoc
 // @Summary      차량 삭제
-// @Description  차량 ID로 차량을 삭제합니다.
+// @Description  vehicle_id로 차량을 삭제합니다.
 // @Tags         vehicle
 // @Produce      json
-// @Param        id   path      int  true  "차량 Internal ID"
+// @Param        id   path      int  true  "차량 ID"
 // @Success      204  "No Content"
+// @Failure      400  {object}  dto.ErrorResponse
 // @Failure      404  {object}  dto.ErrorResponse
 // @Failure      500  {object}  dto.ErrorResponse
 // @Router       /api/vehicle/{id} [delete]
@@ -101,16 +104,16 @@ func (h *VehicleHandler) DeleteVehicle(c *gin.Context) {
 
 // UpdateVehicle godoc
 // @Summary      차량 정보 수정
-// @Description  차량 ID로 차량 정보를 수정합니다.
+// @Description  vehicle_id로 차량 정보를 수정합니다.
 // @Tags         vehicle
 // @Accept       json
 // @Produce      json
-// @Param        id      path      int                      true  "차량 Internal ID"
-// @Param        vehicle body      dto.UpdateVehicleRequest  true  "수정할 차량 정보"
-// @Success      200     {object}  dto.VehicleResponse
-// @Failure      400     {object}  dto.ErrorResponse
-// @Failure      404     {object}  dto.ErrorResponse
-// @Failure      500     {object}  dto.ErrorResponse
+// @Param        id       path      int                      true  "차량 ID"
+// @Param        vehicle  body      dto.UpdateVehicleRequest  true  "수정할 차량 정보"
+// @Success      200      {object}  dto.VehicleResponse
+// @Failure      400      {object}  dto.ErrorResponse
+// @Failure      404      {object}  dto.ErrorResponse
+// @Failure      500      {object}  dto.ErrorResponse
 // @Router       /api/vehicle/{id} [put]
 func (h *VehicleHandler) UpdateVehicle(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -140,7 +143,7 @@ func (h *VehicleHandler) UpdateVehicle(c *gin.Context) {
 // @Description  모든 차량 정보를 반환합니다.
 // @Tags         vehicle
 // @Produce      json
-// @Param        sort  query     string  false  "정렬 필드 (예: -internal_id, -vehicle_id 등)"
+// @Param        sort  query     string  false  "정렬 필드"
 // @Success      200   {array}   dto.VehicleResponse
 // @Router       /api/vehicle [get]
 func (h *VehicleHandler) ListVehicles(c *gin.Context) {
@@ -158,25 +161,14 @@ func (h *VehicleHandler) ListVehicles(c *gin.Context) {
 // @Description  쿼리 파라미터로 차량을 검색합니다.
 // @Tags         vehicle
 // @Produce      json
-// @Param        internal_id        query     int     false  "차량 Internal ID"
-// @Param        vehicle_id         query     string  false  "차량 ID"
-// @Param        current_load       query     int     false  "현재 적재량"
-// @Param        max_load           query     int     false  "최대 적재량"
-// @Param        led_status         query     string  false  "LED 상태"
-// @Param        needs_confirmation query     bool    false  "확인 필요 여부"
-// @Param        coord_x            query     int     false  "X 좌표"
-// @Param        coord_y            query     int     false  "Y 좌표"
-// @Param        sort               query     string  false  "정렬 필드 (예: -internal_id, -vehicle_id 등)"
+// @Param        vehicle_id   query     int     false  "차량 ID"
+// @Param        model        query     string  false  "차량 모델"
+// @Param        status       query     string  false  "상태"
+// @Param        sort         query     string  false  "정렬 필드"
 // @Success      200  {array}   dto.VehicleResponse
-// @Failure      400  {object}  dto.ErrorResponse
 // @Router       /api/vehicle/search [get]
 func (h *VehicleHandler) SearchVehicles(c *gin.Context) {
-	params := map[string]string{}
-	for _, key := range []string{"internal_id", "vehicle_id", "current_load", "max_load", "led_status", "needs_confirmation", "coord_x", "coord_y"} {
-		if v := c.Query(key); v != "" {
-			params[key] = v
-		}
-	}
+	params := dto.ExtractAllowedParams(c.Request.URL.Query(), constants.VehicleAllowedFields)
 	sortParam := c.Query("sort")
 	vehicles, err := h.service.SearchVehicles(c.Request.Context(), params, sortParam)
 	if err != nil {

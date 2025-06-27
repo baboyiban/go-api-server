@@ -62,7 +62,8 @@ func (s *EmployeeService) CreateEmployee(ctx context.Context, req dto.CreateEmpl
 	if err := s.db.WithContext(ctx).Create(&emp).Error; err != nil {
 		return nil, err
 	}
-	return toEmployeeResponse(&emp), nil
+	resp := dto.ToEmployeeResponse(&emp)
+	return &resp, nil
 }
 
 func (s *EmployeeService) GetEmployeeByID(ctx context.Context, id int) (*dto.EmployeeResponse, error) {
@@ -70,7 +71,8 @@ func (s *EmployeeService) GetEmployeeByID(ctx context.Context, id int) (*dto.Emp
 	if err := s.db.WithContext(ctx).Where("employee_id = ?", id).First(&emp).Error; err != nil {
 		return nil, err
 	}
-	return toEmployeeResponse(&emp), nil
+	resp := dto.ToEmployeeResponse(&emp)
+	return &resp, nil
 }
 
 func (s *EmployeeService) DeleteEmployee(ctx context.Context, id int) error {
@@ -101,7 +103,8 @@ func (s *EmployeeService) UpdateEmployee(ctx context.Context, id int, req dto.Up
 	if err := s.db.WithContext(ctx).Save(&emp).Error; err != nil {
 		return nil, err
 	}
-	return toEmployeeResponse(&emp), nil
+	resp := dto.ToEmployeeResponse(&emp)
+	return &resp, nil
 }
 
 func (s *EmployeeService) ListEmployees(ctx context.Context, sort string) ([]dto.EmployeeResponse, error) {
@@ -111,9 +114,9 @@ func (s *EmployeeService) ListEmployees(ctx context.Context, sort string) ([]dto
 	if err := query.Find(&emps).Error; err != nil {
 		return nil, err
 	}
-	var res []dto.EmployeeResponse
-	for _, e := range emps {
-		res = append(res, *toEmployeeResponse(&e))
+	res := make([]dto.EmployeeResponse, 0, len(emps))
+	for i := range emps {
+		res = append(res, dto.ToEmployeeResponse(&emps[i]))
 	}
 	return res, nil
 }
@@ -128,17 +131,9 @@ func (s *EmployeeService) SearchEmployees(ctx context.Context, params map[string
 	if err := query.Find(&emps).Error; err != nil {
 		return nil, err
 	}
-	var res []dto.EmployeeResponse
-	for _, e := range emps {
-		res = append(res, *toEmployeeResponse(&e))
+	res := make([]dto.EmployeeResponse, 0, len(emps))
+	for i := range emps {
+		res = append(res, dto.ToEmployeeResponse(&emps[i]))
 	}
 	return res, nil
-}
-
-func toEmployeeResponse(m *models.Employee) *dto.EmployeeResponse {
-	return &dto.EmployeeResponse{
-		EmployeeID: m.EmployeeID,
-		Position:   m.Position,
-		IsActive:   m.IsActive,
-	}
 }

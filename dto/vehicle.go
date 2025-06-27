@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/baboyiban/go-api-server/models"
+
 type CreateVehicleRequest struct {
 	VehicleID string `json:"vehicle_id" binding:"required"`
 	MaxLoad   int    `json:"max_load"`
@@ -30,4 +32,19 @@ type VehicleResponse struct {
 	CoordY            *int   `json:"coord_y,omitempty"`
 	AICoordX          *int   `json:"AI_coord_x,omitempty"`
 	AICoordY          *int   `json:"AI_coord_y,omitempty"`
+}
+
+func ToVehicleResponse(v *models.Vehicle) VehicleResponse {
+	return VehicleResponse{
+		InternalID:        v.InternalID,
+		VehicleID:         v.VehicleID,
+		CurrentLoad:       v.CurrentLoad,
+		MaxLoad:           v.MaxLoad,
+		LedStatus:         v.LedStatus,
+		NeedsConfirmation: v.NeedsConfirmation,
+		CoordX:            v.CoordX,
+		CoordY:            v.CoordY,
+		AICoordX:          v.AICoordX,
+		AICoordY:          v.AICoordY,
+	}
 }

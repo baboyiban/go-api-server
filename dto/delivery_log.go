@@ -1,5 +1,10 @@
 package dto
 
+import (
+	"github.com/baboyiban/go-api-server/models"
+	"github.com/baboyiban/go-api-server/utils"
+)
+
 type CreateDeliveryLogRequest struct {
 	TripID              int     `json:"trip_id" binding:"required"`
 	PackageID           int     `json:"package_id" binding:"required"`
@@ -31,4 +36,18 @@ type DeliveryLogResponse struct {
 	InputTime           *string `json:"input_time"`
 	SecondTransportTime *string `json:"second_transport_time"`
 	CompletedAt         *string `json:"completed_at"`
+}
+
+func ToDeliveryLogResponse(m *models.DeliveryLog) DeliveryLogResponse {
+	return DeliveryLogResponse{
+		TripID:              m.TripID,
+		PackageID:           m.PackageID,
+		RegionID:            m.RegionID,
+		LoadOrder:           m.LoadOrder,
+		RegisteredAt:        utils.FormatTimePtr(&m.RegisteredAt),
+		FirstTransportTime:  utils.FormatTimePtr(m.FirstTransportTime),
+		InputTime:           utils.FormatTimePtr(m.InputTime),
+		SecondTransportTime: utils.FormatTimePtr(m.SecondTransportTime),
+		CompletedAt:         utils.FormatTimePtr(m.CompletedAt),
+	}
 }

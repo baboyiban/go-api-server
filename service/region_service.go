@@ -50,32 +50,30 @@ func NewRegionService(db *gorm.DB) *RegionService {
 	return &RegionService{db: db}
 }
 
-// CreateRegion: 새로운 지역 생성
-func (s *RegionService) CreateRegion(ctx context.Context, req dto.CreateRegionRequest) (*models.Region, error) {
+func (s *RegionService) CreateRegion(ctx context.Context, req dto.CreateRegionRequest) (*dto.RegionResponse, error) {
 	region := models.Region{
 		RegionID:    req.RegionID,
 		RegionName:  req.RegionName,
 		CoordX:      req.CoordX,
 		CoordY:      req.CoordY,
 		MaxCapacity: req.MaxCapacity,
-		// CurrentCapacity, IsFull, SaturatedAt는 zero value 또는 default
 	}
 	if err := s.db.WithContext(ctx).Create(&region).Error; err != nil {
 		return nil, err
 	}
-	return &region, nil
+	resp := dto.ToRegionResponse(&region)
+	return &resp, nil
 }
 
-// GetRegionByID: region_id로 단건 조회
-func (s *RegionService) GetRegionByID(ctx context.Context, id string) (*models.Region, error) {
+func (s *RegionService) GetRegionByID(ctx context.Context, id string) (*dto.RegionResponse, error) {
 	var region models.Region
 	if err := s.db.WithContext(ctx).Where("region_id = ?", id).First(&region).Error; err != nil {
 		return nil, err
 	}
-	return &region, nil
+	resp := dto.ToRegionResponse(&region)
+	return &resp, nil
 }
 
-// DeleteRegion: 지역 삭제
 func (s *RegionService) DeleteRegion(ctx context.Context, id string) error {
 	result := s.db.WithContext(ctx).Where("region_id = ?", id).Delete(&models.Region{})
 	if result.Error != nil {
@@ -87,7 +85,7 @@ func (s *RegionService) DeleteRegion(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *RegionService) UpdateRegion(ctx context.Context, id string, req dto.UpdateRegionRequest) (*models.Region, error) {
+func (s *RegionService) UpdateRegion(ctx context.Context, id string, req dto.UpdateRegionRequest) (*dto.RegionResponse, error) {
 	var region models.Region
 	if err := s.db.WithContext(ctx).Where("region_id = ?", id).First(&region).Error; err != nil {
 		return nil, err
@@ -105,20 +103,25 @@ func (s *RegionService) UpdateRegion(ctx context.Context, id string, req dto.Upd
 	if err := s.db.WithContext(ctx).Save(&region).Error; err != nil {
 		return nil, err
 	}
-	return &region, nil
+	resp := dto.ToRegionResponse(&region)
+	return &resp, nil
 }
 
-func (s *RegionService) ListRegions(ctx context.Context, sort string) ([]models.Region, error) {
+func (s *RegionService) ListRegions(ctx context.Context, sort string) ([]dto.RegionResponse, error) {
 	var regions []models.Region
 	query := s.db.WithContext(ctx).Model(&models.Region{})
 	query = applyRegionSort(query, sort)
 	if err := query.Find(&regions).Error; err != nil {
 		return nil, err
 	}
-	return regions, nil
+	res := make([]dto.RegionResponse, 0, len(regions))
+	for i := range regions {
+		res = append(res, dto.ToRegionResponse(&regions[i]))
+	}
+	return res, nil
 }
 
-func (s *RegionService) SearchRegions(ctx context.Context, params map[string]string, sort string) ([]models.Region, error) {
+func (s *RegionService) SearchRegions(ctx context.Context, params map[string]string, sort string) ([]dto.RegionResponse, error) {
 	var regions []models.Region
 	query := s.db.WithContext(ctx).Model(&models.Region{})
 	for k, v := range params {
@@ -132,5 +135,9 @@ func (s *RegionService) SearchRegions(ctx context.Context, params map[string]str
 	if err := query.Find(&regions).Error; err != nil {
 		return nil, err
 	}
-	return regions, nil
+	res := make([]dto.RegionResponse, 0, len(regions))
+	for i := range regions {
+		res = append(res, dto.ToRegionResponse(&regions[i]))
+	}
+	return res, nil
 }

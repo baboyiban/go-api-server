@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/baboyiban/go-api-server/constants"
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,7 @@ func (h *RegionHandler) CreateRegion(c *gin.Context) {
 
 // GetRegionByID godoc
 // @Summary      지역 단건 조회
-// @Description  지역 ID로 지역 정보를 조회합니다.
+// @Description  region_id로 지역을 조회합니다.
 // @Tags         region
 // @Produce      json
 // @Param        id   path      string  true  "지역 ID"
@@ -68,7 +69,7 @@ func (h *RegionHandler) GetRegionByID(c *gin.Context) {
 
 // DeleteRegion godoc
 // @Summary      지역 삭제
-// @Description  지역 ID로 지역 정보를 삭제합니다.
+// @Description  region_id로 지역을 삭제합니다.
 // @Tags         region
 // @Produce      json
 // @Param        id   path      string  true  "지역 ID"
@@ -92,12 +93,12 @@ func (h *RegionHandler) DeleteRegion(c *gin.Context) {
 
 // UpdateRegion godoc
 // @Summary      지역 정보 수정
-// @Description  지역 ID로 지역 정보를 수정합니다.
+// @Description  region_id로 지역 정보를 수정합니다.
 // @Tags         region
 // @Accept       json
 // @Produce      json
-// @Param        id      path      string                  true  "지역 ID"
-// @Param        region  body      dto.UpdateRegionRequest true  "수정할 지역 정보"
+// @Param        id      path      string                   true  "지역 ID"
+// @Param        region  body      dto.UpdateRegionRequest  true  "수정할 지역 정보"
 // @Success      200     {object}  dto.RegionResponse
 // @Failure      400     {object}  dto.ErrorResponse
 // @Failure      404     {object}  dto.ErrorResponse
@@ -127,7 +128,7 @@ func (h *RegionHandler) UpdateRegion(c *gin.Context) {
 // @Description  모든 지역 정보를 반환합니다.
 // @Tags         region
 // @Produce      json
-// @Param        sort  query     string  false  "정렬 필드 (예: -registered_at는 최신순, region_id 등)"
+// @Param        sort  query     string  false  "정렬 필드"
 // @Success      200   {array}   dto.RegionResponse
 // @Router       /api/region [get]
 func (h *RegionHandler) ListRegions(c *gin.Context) {
@@ -145,24 +146,13 @@ func (h *RegionHandler) ListRegions(c *gin.Context) {
 // @Description  쿼리 파라미터로 지역을 검색합니다.
 // @Tags         region
 // @Produce      json
-// @Param        region_id        query     string  false  "지역 ID"
-// @Param        region_name      query     string  false  "지역명"
-// @Param        coord_x          query     int     false  "X 좌표"
-// @Param        coord_y          query     int     false  "Y 좌표"
-// @Param        max_capacity     query     int     false  "최대 용량"
-// @Param        current_capacity query     int     false  "현재 용량"
-// @Param        is_full          query     bool    false  "포화 여부"
-// @Param        saturated_at     query     string  false  "포화 시각 (YYYY-MM-DD)"
-// @Param        sort             query     string  false  "정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)"
+// @Param        region_id   query     string  false  "지역 ID"
+// @Param        name        query     string  false  "지역명"
+// @Param        sort        query     string  false  "정렬 필드"
 // @Success      200  {array}   dto.RegionResponse
 // @Router       /api/region/search [get]
 func (h *RegionHandler) SearchRegions(c *gin.Context) {
-	params := map[string]string{}
-	for _, key := range []string{"region_id", "region_name", "coord_x", "coord_y", "max_capacity", "current_capacity", "is_full", "saturated_at"} {
-		if v := c.Query(key); v != "" {
-			params[key] = v
-		}
-	}
+	params := dto.ExtractAllowedParams(c.Request.URL.Query(), constants.RegionAllowedFields)
 	sortParam := c.Query("sort")
 	regions, err := h.service.SearchRegions(c.Request.Context(), params, sortParam)
 	if err != nil {

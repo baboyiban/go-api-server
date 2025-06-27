@@ -1,5 +1,10 @@
 package dto
 
+import (
+	"github.com/baboyiban/go-api-server/models"
+	"github.com/baboyiban/go-api-server/utils"
+)
+
 type CreateRegionRequest struct {
 	RegionID    string `json:"region_id" binding:"required,len=3"`
 	RegionName  string `json:"region_name" binding:"required"`
@@ -27,4 +32,17 @@ type RegionResponse struct {
 	CurrentCapacity int     `json:"current_capacity"`
 	IsFull          bool    `json:"is_full"`
 	SaturatedAt     *string `json:"saturated_at,omitempty"`
+}
+
+func ToRegionResponse(region *models.Region) RegionResponse {
+	return RegionResponse{
+		RegionID:        region.RegionID,
+		RegionName:      region.RegionName,
+		CoordX:          region.CoordX,
+		CoordY:          region.CoordY,
+		MaxCapacity:     region.MaxCapacity,
+		CurrentCapacity: region.CurrentCapacity,
+		IsFull:          region.IsFull,
+		SaturatedAt:     utils.FormatTimePtr(region.SaturatedAt),
+	}
 }

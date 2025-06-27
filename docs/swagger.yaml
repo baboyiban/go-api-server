@@ -377,7 +377,7 @@ paths:
     get:
       description: 모든 배송 로그 정보를 반환합니다.
       parameters:
-      - description: '정렬 필드 (예: -registration_time, -trip_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -424,9 +424,9 @@ paths:
       - delivery_log
   /api/delivery-log/{id}:
     delete:
-      description: trip_id로 배송 로그를 삭제합니다.
+      description: delivery_log_id로 배송 로그를 삭제합니다.
       parameters:
-      - description: 배송 로그 trip_id
+      - description: 배송 로그 ID
         in: path
         name: id
         required: true
@@ -436,6 +436,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -448,9 +452,9 @@ paths:
       tags:
       - delivery_log
     get:
-      description: trip_id로 배송 로그를 조회합니다.
+      description: delivery_log_id로 배송 로그를 조회합니다.
       parameters:
-      - description: 배송 로그 trip_id
+      - description: 배송 로그 ID
         in: path
         name: id
         required: true
@@ -462,6 +466,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.DeliveryLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -476,9 +484,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: trip_id로 배송 로그 정보를 수정합니다.
+      description: delivery_log_id로 배송 로그 정보를 수정합니다.
       parameters:
-      - description: 배송 로그 trip_id
+      - description: 배송 로그 ID
         in: path
         name: id
         required: true
@@ -515,43 +523,15 @@ paths:
     get:
       description: 쿼리 파라미터로 배송 로그를 검색합니다.
       parameters:
-      - description: trip_id
+      - description: 배송 로그 ID
         in: query
-        name: trip_id
+        name: delivery_log_id
         type: integer
-      - description: package_id
+      - description: 상태
         in: query
-        name: package_id
-        type: integer
-      - description: region_id
-        in: query
-        name: region_id
+        name: status
         type: string
-      - description: load_order
-        in: query
-        name: load_order
-        type: integer
-      - description: 등록 시각 (YYYY-MM-DD)
-        in: query
-        name: registered_at
-        type: string
-      - description: 첫 운송 시각 (YYYY-MM-DD)
-        in: query
-        name: first_transport_time
-        type: string
-      - description: 투입 시각 (YYYY-MM-DD)
-        in: query
-        name: input_time
-        type: string
-      - description: 두번째 운송 시각 (YYYY-MM-DD)
-        in: query
-        name: second_transport_time
-        type: string
-      - description: 완료 시각 (YYYY-MM-DD)
-        in: query
-        name: completed_at
-        type: string
-      - description: '정렬 필드 (예: -registration_time, -trip_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -571,7 +551,7 @@ paths:
     get:
       description: 모든 직원 정보를 반환합니다.
       parameters:
-      - description: '정렬 필드 (예: -employee_id, -position 등)'
+      - description: '정렬 필드 (예: -employee_id 등)'
         in: query
         name: sort
         type: string
@@ -618,7 +598,7 @@ paths:
       - employee
   /api/employee/{id}:
     delete:
-      description: 직원 ID로 직원을 삭제합니다.
+      description: employee_id로 직원을 삭제합니다.
       parameters:
       - description: 직원 ID
         in: path
@@ -630,6 +610,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -642,7 +626,7 @@ paths:
       tags:
       - employee
     get:
-      description: 직원 ID로 직원 정보를 조회합니다.
+      description: employee_id로 직원을 조회합니다.
       parameters:
       - description: 직원 ID
         in: path
@@ -656,6 +640,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.EmployeeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -670,7 +658,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: 직원 ID로 직원 정보를 수정합니다.
+      description: employee_id로 직원 정보를 수정합니다.
       parameters:
       - description: 직원 ID
         in: path
@@ -713,6 +701,10 @@ paths:
         in: query
         name: employee_id
         type: integer
+      - description: 이름
+        in: query
+        name: name
+        type: string
       - description: 직책
         in: query
         name: position
@@ -721,7 +713,7 @@ paths:
         in: query
         name: is_active
         type: boolean
-      - description: '정렬 필드 (예: -employee_id, -position 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -734,18 +726,14 @@ paths:
             items:
               $ref: '#/definitions/dto.EmployeeResponse'
             type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
       summary: 직원 검색
       tags:
       - employee
   /api/package:
     get:
-      description: 모든 패키지 정보를 반환합니다.
+      description: 모든 택배 정보를 반환합니다.
       parameters:
-      - description: '정렬 필드 (예: -registered_at는 최신순, package_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -758,15 +746,15 @@ paths:
             items:
               $ref: '#/definitions/dto.PackageResponse'
             type: array
-      summary: 모든 패키지 조회
+      summary: 모든 택배 조회
       tags:
       - package
     post:
       consumes:
       - application/json
-      description: 새로운 패키지를 생성합니다.
+      description: 새로운 택배를 생성합니다.
       parameters:
-      - description: 패키지 정보
+      - description: 택배 정보
         in: body
         name: package
         required: true
@@ -787,14 +775,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: 패키지 생성
+      summary: 택배 생성
       tags:
       - package
   /api/package/{id}:
     delete:
-      description: 패키지 ID로 패키지를 삭제합니다.
+      description: package_id로 택배를 삭제합니다.
       parameters:
-      - description: 패키지 ID
+      - description: 택배 ID
         in: path
         name: id
         required: true
@@ -804,6 +792,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -812,13 +804,13 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: 패키지 삭제
+      summary: 택배 삭제
       tags:
       - package
     get:
-      description: 패키지 ID로 패키지 정보를 조회합니다.
+      description: package_id로 택배를 조회합니다.
       parameters:
-      - description: 패키지 ID
+      - description: 택배 ID
         in: path
         name: id
         required: true
@@ -830,6 +822,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.PackageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -838,20 +834,20 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: 패키지 단건 조회
+      summary: 택배 단건 조회
       tags:
       - package
     put:
       consumes:
       - application/json
-      description: 패키지 ID로 패키지 정보를 수정합니다.
+      description: package_id로 택배 정보를 수정합니다.
       parameters:
-      - description: 패키지 ID
+      - description: 택배 ID
         in: path
         name: id
         required: true
         type: integer
-      - description: 수정할 패키지 정보
+      - description: 수정할 택배 정보
         in: body
         name: package
         required: true
@@ -876,34 +872,26 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: 패키지 정보 수정
+      summary: 택배 정보 수정
       tags:
       - package
   /api/package/search:
     get:
-      description: 쿼리 파라미터로 패키지를 검색합니다.
+      description: 쿼리 파라미터로 택배를 검색합니다.
       parameters:
-      - description: 패키지 ID
+      - description: 택배 ID
         in: query
         name: package_id
         type: integer
-      - description: 패키지 타입
+      - description: 수령인
         in: query
-        name: package_type
+        name: recipient
         type: string
-      - description: 지역 ID
+      - description: 상태
         in: query
-        name: region_id
+        name: status
         type: string
-      - description: 패키지 상태
-        in: query
-        name: package_status
-        type: string
-      - description: 등록 시각 (YYYY-MM-DD)
-        in: query
-        name: registered_at
-        type: string
-      - description: '정렬 필드 (예: -registered_at, -package_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -916,14 +904,14 @@ paths:
             items:
               $ref: '#/definitions/dto.PackageResponse'
             type: array
-      summary: 패키지 검색
+      summary: 택배 검색
       tags:
       - package
   /api/region:
     get:
       description: 모든 지역 정보를 반환합니다.
       parameters:
-      - description: '정렬 필드 (예: -registered_at는 최신순, region_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -970,7 +958,7 @@ paths:
       - region
   /api/region/{id}:
     delete:
-      description: 지역 ID로 지역 정보를 삭제합니다.
+      description: region_id로 지역을 삭제합니다.
       parameters:
       - description: 지역 ID
         in: path
@@ -994,7 +982,7 @@ paths:
       tags:
       - region
     get:
-      description: 지역 ID로 지역 정보를 조회합니다.
+      description: region_id로 지역을 조회합니다.
       parameters:
       - description: 지역 ID
         in: path
@@ -1022,7 +1010,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: 지역 ID로 지역 정보를 수정합니다.
+      description: region_id로 지역 정보를 수정합니다.
       parameters:
       - description: 지역 ID
         in: path
@@ -1067,33 +1055,9 @@ paths:
         type: string
       - description: 지역명
         in: query
-        name: region_name
+        name: name
         type: string
-      - description: X 좌표
-        in: query
-        name: coord_x
-        type: integer
-      - description: Y 좌표
-        in: query
-        name: coord_y
-        type: integer
-      - description: 최대 용량
-        in: query
-        name: max_capacity
-        type: integer
-      - description: 현재 용량
-        in: query
-        name: current_capacity
-        type: integer
-      - description: 포화 여부
-        in: query
-        name: is_full
-        type: boolean
-      - description: 포화 시각 (YYYY-MM-DD)
-        in: query
-        name: saturated_at
-        type: string
-      - description: '정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -1295,7 +1259,7 @@ paths:
     get:
       description: 모든 차량 정보를 반환합니다.
       parameters:
-      - description: '정렬 필드 (예: -internal_id, -vehicle_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -1342,9 +1306,9 @@ paths:
       - vehicle
   /api/vehicle/{id}:
     delete:
-      description: 차량 ID로 차량을 삭제합니다.
+      description: vehicle_id로 차량을 삭제합니다.
       parameters:
-      - description: 차량 Internal ID
+      - description: 차량 ID
         in: path
         name: id
         required: true
@@ -1354,6 +1318,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1366,9 +1334,9 @@ paths:
       tags:
       - vehicle
     get:
-      description: 차량 ID로 차량 정보를 조회합니다.
+      description: vehicle_id로 차량을 조회합니다.
       parameters:
-      - description: 차량 Internal ID
+      - description: 차량 ID
         in: path
         name: id
         required: true
@@ -1380,6 +1348,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.VehicleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -1394,9 +1366,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: 차량 ID로 차량 정보를 수정합니다.
+      description: vehicle_id로 차량 정보를 수정합니다.
       parameters:
-      - description: 차량 Internal ID
+      - description: 차량 ID
         in: path
         name: id
         required: true
@@ -1433,39 +1405,19 @@ paths:
     get:
       description: 쿼리 파라미터로 차량을 검색합니다.
       parameters:
-      - description: 차량 Internal ID
-        in: query
-        name: internal_id
-        type: integer
       - description: 차량 ID
         in: query
         name: vehicle_id
+        type: integer
+      - description: 차량 모델
+        in: query
+        name: model
         type: string
-      - description: 현재 적재량
+      - description: 상태
         in: query
-        name: current_load
-        type: integer
-      - description: 최대 적재량
-        in: query
-        name: max_load
-        type: integer
-      - description: LED 상태
-        in: query
-        name: led_status
+        name: status
         type: string
-      - description: 확인 필요 여부
-        in: query
-        name: needs_confirmation
-        type: boolean
-      - description: X 좌표
-        in: query
-        name: coord_x
-        type: integer
-      - description: Y 좌표
-        in: query
-        name: coord_y
-        type: integer
-      - description: '정렬 필드 (예: -internal_id, -vehicle_id 등)'
+      - description: 정렬 필드
         in: query
         name: sort
         type: string
@@ -1478,10 +1430,6 @@ paths:
             items:
               $ref: '#/definitions/dto.VehicleResponse'
             type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
       summary: 차량 검색
       tags:
       - vehicle

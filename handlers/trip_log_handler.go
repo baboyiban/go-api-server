@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/baboyiban/go-api-server/constants"
 	"github.com/baboyiban/go-api-server/dto"
 	"github.com/baboyiban/go-api-server/service"
 	"github.com/gin-gonic/gin"
@@ -168,12 +169,7 @@ func (h *TripLogHandler) ListTripLogs(c *gin.Context) {
 // @Success      200  {array}   dto.TripLogResponse
 // @Router       /api/trip-log/search [get]
 func (h *TripLogHandler) SearchTripLogs(c *gin.Context) {
-	params := map[string]string{}
-	for _, key := range []string{"trip_id", "vehicle_id", "status", "destination", "start_time", "end_time"} {
-		if v := c.Query(key); v != "" {
-			params[key] = v
-		}
-	}
+	params := dto.ExtractAllowedParams(c.Request.URL.Query(), constants.TripLogAllowedFields)
 	sortParam := c.Query("sort")
 	trips, err := h.service.SearchTripLogs(c.Request.Context(), params, sortParam)
 	if err != nil {

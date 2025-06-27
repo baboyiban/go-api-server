@@ -49,7 +49,7 @@ func NewVehicleService(db *gorm.DB) *VehicleService {
 	return &VehicleService{db: db}
 }
 
-func (s *VehicleService) CreateVehicle(ctx context.Context, req dto.CreateVehicleRequest) (*models.Vehicle, error) {
+func (s *VehicleService) CreateVehicle(ctx context.Context, req dto.CreateVehicleRequest) (*dto.VehicleResponse, error) {
 	vehicle := models.Vehicle{
 		VehicleID: req.VehicleID,
 		MaxLoad:   req.MaxLoad,
@@ -61,15 +61,17 @@ func (s *VehicleService) CreateVehicle(ctx context.Context, req dto.CreateVehicl
 	if err := s.db.WithContext(ctx).Create(&vehicle).Error; err != nil {
 		return nil, err
 	}
-	return &vehicle, nil
+	resp := dto.ToVehicleResponse(&vehicle)
+	return &resp, nil
 }
 
-func (s *VehicleService) GetVehicleByID(ctx context.Context, id int) (*models.Vehicle, error) {
+func (s *VehicleService) GetVehicleByID(ctx context.Context, id int) (*dto.VehicleResponse, error) {
 	var vehicle models.Vehicle
 	if err := s.db.WithContext(ctx).Where("internal_id = ?", id).First(&vehicle).Error; err != nil {
 		return nil, err
 	}
-	return &vehicle, nil
+	resp := dto.ToVehicleResponse(&vehicle)
+	return &resp, nil
 }
 
 func (s *VehicleService) DeleteVehicle(ctx context.Context, id int) error {
@@ -83,7 +85,7 @@ func (s *VehicleService) DeleteVehicle(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *VehicleService) UpdateVehicle(ctx context.Context, id int, req dto.UpdateVehicleRequest) (*models.Vehicle, error) {
+func (s *VehicleService) UpdateVehicle(ctx context.Context, id int, req dto.UpdateVehicleRequest) (*dto.VehicleResponse, error) {
 	var vehicle models.Vehicle
 	if err := s.db.WithContext(ctx).Where("internal_id = ?", id).First(&vehicle).Error; err != nil {
 		return nil, err
@@ -96,20 +98,25 @@ func (s *VehicleService) UpdateVehicle(ctx context.Context, id int, req dto.Upda
 	if err := s.db.WithContext(ctx).Save(&vehicle).Error; err != nil {
 		return nil, err
 	}
-	return &vehicle, nil
+	resp := dto.ToVehicleResponse(&vehicle)
+	return &resp, nil
 }
 
-func (s *VehicleService) ListVehicles(ctx context.Context, sort string) ([]models.Vehicle, error) {
+func (s *VehicleService) ListVehicles(ctx context.Context, sort string) ([]dto.VehicleResponse, error) {
 	var vehicles []models.Vehicle
 	query := s.db.WithContext(ctx).Model(&models.Vehicle{})
 	query = applyVehicleSort(query, sort)
 	if err := query.Find(&vehicles).Error; err != nil {
 		return nil, err
 	}
-	return vehicles, nil
+	res := make([]dto.VehicleResponse, 0, len(vehicles))
+	for i := range vehicles {
+		res = append(res, dto.ToVehicleResponse(&vehicles[i]))
+	}
+	return res, nil
 }
 
-func (s *VehicleService) SearchVehicles(ctx context.Context, params map[string]string, sort string) ([]models.Vehicle, error) {
+func (s *VehicleService) SearchVehicles(ctx context.Context, params map[string]string, sort string) ([]dto.VehicleResponse, error) {
 	var vehicles []models.Vehicle
 	query := s.db.WithContext(ctx).Model(&models.Vehicle{})
 	for k, v := range params {
@@ -119,5 +126,9 @@ func (s *VehicleService) SearchVehicles(ctx context.Context, params map[string]s
 	if err := query.Find(&vehicles).Error; err != nil {
 		return nil, err
 	}
-	return vehicles, nil
+	res := make([]dto.VehicleResponse, 0, len(vehicles))
+	for i := range vehicles {
+		res = append(res, dto.ToVehicleResponse(&vehicles[i]))
+	}
+	return res, nil
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/baboyiban/go-api-server/database"
 	"github.com/baboyiban/go-api-server/handlers"
 	"github.com/gin-contrib/cors"
+	"go.uber.org/zap"
 )
 
 // @title           Go API Server
@@ -23,6 +24,10 @@ import (
 // @host            localhost:3000
 // @BasePath        /
 func main() {
+	r := gin.New()
+	logger, _ := zap.NewProduction()
+	r.Use(middleware.Logger(logger))
+
 	// 환경변수에서 GIN_MODE 읽어서 없으면 default는 debug 모드
 	mode := getEnv("GIN_MODE", gin.DebugMode)
 	gin.SetMode(mode)

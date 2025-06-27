@@ -105,7 +105,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -registration_time, -trip_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -180,61 +180,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "trip_id",
-                        "name": "trip_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "package_id",
-                        "name": "package_id",
+                        "description": "배송 로그 ID",
+                        "name": "delivery_log_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "region_id",
-                        "name": "region_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "load_order",
-                        "name": "load_order",
+                        "description": "상태",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "등록 시각 (YYYY-MM-DD)",
-                        "name": "registered_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "첫 운송 시각 (YYYY-MM-DD)",
-                        "name": "first_transport_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "투입 시각 (YYYY-MM-DD)",
-                        "name": "input_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "두번째 운송 시각 (YYYY-MM-DD)",
-                        "name": "second_transport_time",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "완료 시각 (YYYY-MM-DD)",
-                        "name": "completed_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "정렬 필드 (예: -registration_time, -trip_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -254,7 +212,7 @@ const docTemplate = `{
         },
         "/api/delivery-log/{id}": {
             "get": {
-                "description": "trip_id로 배송 로그를 조회합니다.",
+                "description": "delivery_log_id로 배송 로그를 조회합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -265,7 +223,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "배송 로그 trip_id",
+                        "description": "배송 로그 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -276,6 +234,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.DeliveryLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
@@ -293,7 +257,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "trip_id로 배송 로그 정보를 수정합니다.",
+                "description": "delivery_log_id로 배송 로그 정보를 수정합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -307,7 +271,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "배송 로그 trip_id",
+                        "description": "배송 로그 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -350,7 +314,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "trip_id로 배송 로그를 삭제합니다.",
+                "description": "delivery_log_id로 배송 로그를 삭제합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -361,7 +325,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "배송 로그 trip_id",
+                        "description": "배송 로그 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -370,6 +334,12 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -399,7 +369,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -employee_id, -position 등)",
+                        "description": "정렬 필드 (예: -employee_id 등)",
                         "name": "sort",
                         "in": "query"
                     }
@@ -480,6 +450,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "이름",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "직책",
                         "name": "position",
                         "in": "query"
@@ -492,7 +468,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -employee_id, -position 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -506,19 +482,13 @@ const docTemplate = `{
                                 "$ref": "#/definitions/dto.EmployeeResponse"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/api/employee/{id}": {
             "get": {
-                "description": "직원 ID로 직원 정보를 조회합니다.",
+                "description": "employee_id로 직원을 조회합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -542,6 +512,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/dto.EmployeeResponse"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -557,7 +533,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "직원 ID로 직원 정보를 수정합니다.",
+                "description": "employee_id로 직원 정보를 수정합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -614,7 +590,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "직원 ID로 직원을 삭제합니다.",
+                "description": "employee_id로 직원을 삭제합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -635,6 +611,12 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content"
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -652,18 +634,18 @@ const docTemplate = `{
         },
         "/api/package": {
             "get": {
-                "description": "모든 패키지 정보를 반환합니다.",
+                "description": "모든 택배 정보를 반환합니다.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "package"
                 ],
-                "summary": "모든 패키지 조회",
+                "summary": "모든 택배 조회",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -registered_at는 최신순, package_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -681,7 +663,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "새로운 패키지를 생성합니다.",
+                "description": "새로운 택배를 생성합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -691,10 +673,10 @@ const docTemplate = `{
                 "tags": [
                     "package"
                 ],
-                "summary": "패키지 생성",
+                "summary": "택배 생성",
                 "parameters": [
                     {
-                        "description": "패키지 정보",
+                        "description": "택배 정보",
                         "name": "package",
                         "in": "body",
                         "required": true,
@@ -727,48 +709,36 @@ const docTemplate = `{
         },
         "/api/package/search": {
             "get": {
-                "description": "쿼리 파라미터로 패키지를 검색합니다.",
+                "description": "쿼리 파라미터로 택배를 검색합니다.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "package"
                 ],
-                "summary": "패키지 검색",
+                "summary": "택배 검색",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "패키지 ID",
+                        "description": "택배 ID",
                         "name": "package_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "패키지 타입",
-                        "name": "package_type",
+                        "description": "수령인",
+                        "name": "recipient",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "지역 ID",
-                        "name": "region_id",
+                        "description": "상태",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "패키지 상태",
-                        "name": "package_status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "등록 시각 (YYYY-MM-DD)",
-                        "name": "registered_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "정렬 필드 (예: -registered_at, -package_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -788,18 +758,18 @@ const docTemplate = `{
         },
         "/api/package/{id}": {
             "get": {
-                "description": "패키지 ID로 패키지 정보를 조회합니다.",
+                "description": "package_id로 택배를 조회합니다.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "package"
                 ],
-                "summary": "패키지 단건 조회",
+                "summary": "택배 단건 조회",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "패키지 ID",
+                        "description": "택배 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -810,6 +780,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.PackageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
@@ -827,7 +803,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "패키지 ID로 패키지 정보를 수정합니다.",
+                "description": "package_id로 택배 정보를 수정합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -837,17 +813,17 @@ const docTemplate = `{
                 "tags": [
                     "package"
                 ],
-                "summary": "패키지 정보 수정",
+                "summary": "택배 정보 수정",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "패키지 ID",
+                        "description": "택배 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "수정할 패키지 정보",
+                        "description": "수정할 택배 정보",
                         "name": "package",
                         "in": "body",
                         "required": true,
@@ -884,18 +860,18 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "패키지 ID로 패키지를 삭제합니다.",
+                "description": "package_id로 택배를 삭제합니다.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "package"
                 ],
-                "summary": "패키지 삭제",
+                "summary": "택배 삭제",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "패키지 ID",
+                        "description": "택배 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -904,6 +880,12 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -933,7 +915,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -registered_at는 최신순, region_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1015,48 +997,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "지역명",
-                        "name": "region_name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "X 좌표",
-                        "name": "coord_x",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Y 좌표",
-                        "name": "coord_y",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "최대 용량",
-                        "name": "max_capacity",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "현재 용량",
-                        "name": "current_capacity",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "포화 여부",
-                        "name": "is_full",
+                        "name": "name",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "포화 시각 (YYYY-MM-DD)",
-                        "name": "saturated_at",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "정렬 필드 (예: -region_id, -max_capacity, -saturated_at 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1076,7 +1022,7 @@ const docTemplate = `{
         },
         "/api/region/{id}": {
             "get": {
-                "description": "지역 ID로 지역 정보를 조회합니다.",
+                "description": "region_id로 지역을 조회합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -1115,7 +1061,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "지역 ID로 지역 정보를 수정합니다.",
+                "description": "region_id로 지역 정보를 수정합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1172,7 +1118,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "지역 ID로 지역 정보를 삭제합니다.",
+                "description": "region_id로 지역을 삭제합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -1497,7 +1443,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -internal_id, -vehicle_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1572,55 +1518,25 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "차량 Internal ID",
-                        "name": "internal_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "차량 ID",
                         "name": "vehicle_id",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "description": "현재 적재량",
-                        "name": "current_load",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "최대 적재량",
-                        "name": "max_load",
+                        "type": "string",
+                        "description": "차량 모델",
+                        "name": "model",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "LED 상태",
-                        "name": "led_status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "확인 필요 여부",
-                        "name": "needs_confirmation",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "X 좌표",
-                        "name": "coord_x",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Y 좌표",
-                        "name": "coord_y",
+                        "description": "상태",
+                        "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "정렬 필드 (예: -internal_id, -vehicle_id 등)",
+                        "description": "정렬 필드",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1634,19 +1550,13 @@ const docTemplate = `{
                                 "$ref": "#/definitions/dto.VehicleResponse"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/api/vehicle/{id}": {
             "get": {
-                "description": "차량 ID로 차량 정보를 조회합니다.",
+                "description": "vehicle_id로 차량을 조회합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -1657,7 +1567,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "차량 Internal ID",
+                        "description": "차량 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1668,6 +1578,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.VehicleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "404": {
@@ -1685,7 +1601,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "차량 ID로 차량 정보를 수정합니다.",
+                "description": "vehicle_id로 차량 정보를 수정합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1699,7 +1615,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "차량 Internal ID",
+                        "description": "차량 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1742,7 +1658,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "차량 ID로 차량을 삭제합니다.",
+                "description": "vehicle_id로 차량을 삭제합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -1753,7 +1669,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "차량 Internal ID",
+                        "description": "차량 ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1762,6 +1678,12 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
