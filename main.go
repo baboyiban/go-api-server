@@ -65,6 +65,7 @@ func getEnv(key, fallback string) string {
 }
 
 func registerRoutes(router *gin.Engine, db *gorm.DB) {
+	// region
 	regionService := service.NewRegionService(db)
 	regionHandler := handlers.NewRegionHandler(regionService)
 	router.POST("/api/region", regionHandler.CreateRegion)
@@ -74,6 +75,7 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/region", regionHandler.ListRegions)
 	router.GET("/api/region/search", regionHandler.SearchRegions)
 
+	// package
 	packageService := service.NewPackageService(db)
 	packageHandler := handlers.NewPackageHandler(packageService)
 	router.POST("/api/package", packageHandler.CreatePackage)
@@ -83,6 +85,7 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/package", packageHandler.ListPackages)
 	router.GET("/api/package/search", packageHandler.SearchPackages)
 
+	// vehicle
 	vehicleService := service.NewVehicleService(db)
 	vehicleHandler := handlers.NewVehicleHandler(vehicleService)
 	router.POST("/api/vehicle", vehicleHandler.CreateVehicle)
@@ -92,6 +95,7 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/vehicle", vehicleHandler.ListVehicles)
 	router.GET("/api/vehicle/search", vehicleHandler.SearchVehicles)
 
+	// trip_log
 	tripLogService := service.NewTripLogService(db)
 	tripLogHandler := handlers.NewTripLogHandler(tripLogService)
 	router.POST("/api/trip-log", tripLogHandler.CreateTripLog)
@@ -101,6 +105,7 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/trip-log", tripLogHandler.ListTripLogs)
 	router.GET("/api/trip-log/search", tripLogHandler.SearchTripLogs)
 
+	// delivery_log
 	deliveryLogService := service.NewDeliveryLogService(db)
 	deliveryLogHandler := handlers.NewDeliveryLogHandler(deliveryLogService)
 	router.POST("/api/delivery-log", deliveryLogHandler.CreateDeliveryLog)
@@ -110,6 +115,7 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.GET("/api/delivery-log", deliveryLogHandler.ListDeliveryLogs)
 	router.GET("/api/delivery-log/search", deliveryLogHandler.SearchDeliveryLogs)
 
+	// employee
 	employeeService := service.NewEmployeeService(db)
 	employeeHandler := handlers.NewEmployeeHandler(employeeService)
 	router.POST("/api/employee", middleware.AuthRequired("관리직"), employeeHandler.CreateEmployee)
@@ -118,6 +124,16 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	router.DELETE("/api/employee/:id", middleware.AuthRequired("관리직"), employeeHandler.DeleteEmployee)
 	router.GET("/api/employee", middleware.AuthRequired("관리직"), employeeHandler.ListEmployees)
 	router.GET("/api/employee/search", middleware.AuthRequired("관리직"), employeeHandler.SearchEmployees)
+
+	// emergency_log
+	emergencyLogService := service.NewEmergencyLogService(db)
+	emergencyLogHandler := handlers.NewEmergencyLogHandler(emergencyLogService)
+	router.POST("/api/emergency-log", emergencyLogHandler.CreateEmergencyLog)
+	router.GET("/api/emergency-log/:id", emergencyLogHandler.GetEmergencyLogByID)
+	router.PUT("/api/emergency-log/:id", emergencyLogHandler.UpdateEmergencyLog)
+	router.DELETE("/api/emergency-log/:id", emergencyLogHandler.DeleteEmergencyLog)
+	router.GET("/api/emergency-log", emergencyLogHandler.ListEmergencyLogs)
+	router.GET("/api/emergency-log/search", emergencyLogHandler.SearchEmergencyLogs)
 
 	// auth
 	authService := service.NewAuthService(db)

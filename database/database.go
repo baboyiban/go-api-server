@@ -45,11 +45,12 @@ func InitDB() *gorm.DB {
 func autoMigrateAll(db *gorm.DB) {
 	modelsToMigrate := []any{
 		&models.Region{},
-		&models.Vehicle{},
-		&models.Employee{},
 		&models.Package{},
-		&models.TripLogB{},
+		&models.Vehicle{},
+		&models.TripLog{},
 		&models.DeliveryLog{},
+		&models.Employee{},
+		&models.EmergencyLog{},
 	}
 
 	for _, m := range modelsToMigrate {

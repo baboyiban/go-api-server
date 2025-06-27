@@ -54,4 +54,12 @@ var (
 		"second_transport_time": true,
 		"completed_at":          true,
 	}
+	EmergencyLogAllowedFields = map[string]bool{
+		"trip_id":            true,
+		"vehicle_id":         true,
+		"call_time":          true,
+		"reason":             true,
+		"employee_id":        true,
+		"needs_confirmation": true,
+	}
 )
