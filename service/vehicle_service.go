@@ -53,6 +53,10 @@ func (s *VehicleService) CreateVehicle(ctx context.Context, req dto.CreateVehicl
 	vehicle := models.Vehicle{
 		VehicleID: req.VehicleID,
 		MaxLoad:   req.MaxLoad,
+		CoordX:    req.CoordX,
+		CoordY:    req.CoordY,
+		AICoordX:  req.AICoordX,
+		AICoordY:  req.AICoordY,
 	}
 	if err := s.db.WithContext(ctx).Create(&vehicle).Error; err != nil {
 		return nil, err
