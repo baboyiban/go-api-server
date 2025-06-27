@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/auth/login": {
             "post": {
-                "description": "직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 반환합니다.",
+                "description": "직원 ID와 비밀번호로 로그인합니다. 성공 시 JWT 토큰을 HttpOnly Secure 쿠키로 반환합니다.",
                 "consumes": [
                     "application/json"
                 ],
@@ -41,7 +41,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "JWT 토큰이 HttpOnly Secure 쿠키(token)로도 반환됨",
                         "schema": {
                             "$ref": "#/definitions/dto.LoginResponse"
                         }
@@ -63,7 +63,12 @@ const docTemplate = `{
         },
         "/api/auth/me": {
             "get": {
-                "description": "JWT 토큰을 이용해 로그인한 직원의 정보를 반환합니다.",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "JWT 토큰을 Authorization 헤더 또는 HttpOnly 쿠키(token)로 전달하여 로그인한 직원의 정보를 반환합니다.",
                 "produces": [
                     "application/json"
                 ],
@@ -199,6 +204,36 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "등록 시각 (YYYY-MM-DD)",
+                        "name": "registered_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "첫 운송 시각 (YYYY-MM-DD)",
+                        "name": "first_transport_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "투입 시각 (YYYY-MM-DD)",
+                        "name": "input_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "두번째 운송 시각 (YYYY-MM-DD)",
+                        "name": "second_transport_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "완료 시각 (YYYY-MM-DD)",
+                        "name": "completed_at",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "정렬 필드 (예: -registration_time, -trip_id 등)",
                         "name": "sort",
                         "in": "query"
@@ -212,12 +247,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/dto.DeliveryLogResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -733,7 +762,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "등록 시각(RFC3339)",
+                        "description": "등록 시각 (YYYY-MM-DD)",
                         "name": "registered_at",
                         "in": "query"
                     },
@@ -752,12 +781,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/dto.PackageResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1027,7 +1050,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "포화 시각(RFC3339)",
+                        "description": "포화 시각 (YYYY-MM-DD)",
                         "name": "saturated_at",
                         "in": "query"
                     },
@@ -1046,12 +1069,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/dto.RegionResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -1266,288 +1283,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/trip-log-b": {
-            "get": {
-                "description": "모든 B차 운행 로그 정보를 반환합니다.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "모든 B차 운행 로그 조회",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.TripLogBResponse"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "새로운 B차 운행 로그를 생성합니다.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "B차 운행 로그 생성",
-                "parameters": [
-                    {
-                        "description": "B차 운행 로그 정보",
-                        "name": "trip_log_b",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateTripLogBRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TripLogBResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/trip-log-b/search": {
-            "get": {
-                "description": "쿼리 파라미터로 B차 운행 로그를 검색합니다.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "B차 운행 로그 검색",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "trip_id",
-                        "name": "trip_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "차량 ID",
-                        "name": "vehicle_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "상태",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "목적지1",
-                        "name": "destination_1",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "목적지2",
-                        "name": "destination_2",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "목적지3",
-                        "name": "destination_3",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "정렬 필드 (예: -trip_id, -start_time 등)",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.TripLogBResponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/trip-log-b/{id}": {
-            "get": {
-                "description": "trip_id로 B차 운행 로그를 조회합니다.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "B차 운행 로그 단건 조회",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "B차 운행 로그 trip_id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TripLogBResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "trip_id로 B차 운행 로그 정보를 수정합니다.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "B차 운행 로그 정보 수정",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "B차 운행 로그 trip_id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "수정할 B차 운행 로그 정보",
-                        "name": "trip_log_b",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.UpdateTripLogBRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TripLogBResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "trip_id로 B차 운행 로그를 삭제합니다.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "trip_log_b"
-                ],
-                "summary": "B차 운행 로그 삭제",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "B차 운행 로그 trip_id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/trip-log/search": {
             "get": {
                 "description": "쿼리 파라미터로 모든 차량 운행 로그를 검색합니다.",
@@ -1569,6 +1304,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "차량 ID",
                         "name": "vehicle_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "출발 시각 (YYYY-MM-DD)",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "도착 시각 (YYYY-MM-DD)",
+                        "name": "end_time",
                         "in": "query"
                     },
                     {
@@ -1598,12 +1345,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/dto.TripLogResponse"
                             }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     }
                 }
@@ -2146,38 +1887,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateTripLogBRequest": {
-            "type": "object",
-            "required": [
-                "vehicle_id"
-            ],
-            "properties": {
-                "destination_1": {
-                    "type": "string"
-                },
-                "destination_2": {
-                    "type": "string"
-                },
-                "destination_3": {
-                    "type": "string"
-                },
-                "end_time": {
-                    "description": "RFC3339 string",
-                    "type": "string"
-                },
-                "start_time": {
-                    "description": "RFC3339 string",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "\"운행중\" or \"비운행중\"",
-                    "type": "string"
-                },
-                "vehicle_id": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.CreateTripLogRequest": {
             "type": "object",
             "required": [
@@ -2210,6 +1919,18 @@ const docTemplate = `{
                 "vehicle_id"
             ],
             "properties": {
+                "AI_coord_x": {
+                    "type": "integer"
+                },
+                "AI_coord_y": {
+                    "type": "integer"
+                },
+                "coord_x": {
+                    "type": "integer"
+                },
+                "coord_y": {
+                    "type": "integer"
+                },
                 "max_load": {
                     "type": "integer"
                 },
@@ -2350,35 +2071,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.TripLogBResponse": {
-            "type": "object",
-            "properties": {
-                "destination_1": {
-                    "type": "string"
-                },
-                "destination_2": {
-                    "type": "string"
-                },
-                "destination_3": {
-                    "type": "string"
-                },
-                "end_time": {
-                    "type": "string"
-                },
-                "start_time": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "trip_id": {
-                    "type": "integer"
-                },
-                "vehicle_id": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.TripLogResponse": {
             "type": "object",
             "properties": {
@@ -2486,29 +2178,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateTripLogBRequest": {
-            "type": "object",
-            "properties": {
-                "destination_1": {
-                    "type": "string"
-                },
-                "destination_2": {
-                    "type": "string"
-                },
-                "destination_3": {
-                    "type": "string"
-                },
-                "end_time": {
-                    "type": "string"
-                },
-                "start_time": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.UpdateTripLogRequest": {
             "type": "object",
             "properties": {
@@ -2529,6 +2198,12 @@ const docTemplate = `{
         "dto.UpdateVehicleRequest": {
             "type": "object",
             "properties": {
+                "AI_coord_x": {
+                    "type": "integer"
+                },
+                "AI_coord_y": {
+                    "type": "integer"
+                },
                 "coord_x": {
                     "type": "integer"
                 },
@@ -2549,6 +2224,12 @@ const docTemplate = `{
         "dto.VehicleResponse": {
             "type": "object",
             "properties": {
+                "AI_coord_x": {
+                    "type": "integer"
+                },
+                "AI_coord_y": {
+                    "type": "integer"
+                },
                 "coord_x": {
                     "type": "integer"
                 },
