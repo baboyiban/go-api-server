@@ -17,6 +17,8 @@ var allowedVehicleSortFields = map[string]bool{
 	"needs_confirmation": true,
 	"coord_x":            true,
 	"coord_y":            true,
+	"AI_coord_x":         true,
+	"AI_coord_y":         true,
 }
 
 func applyVehicleSort(query *gorm.DB, sort string) *gorm.DB {
