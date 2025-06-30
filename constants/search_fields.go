@@ -62,4 +62,10 @@ var (
 		"employee_id":        true,
 		"needs_confirmation": true,
 	}
+	ChangeNotifyAllowedFields = map[string]bool{
+		"id":         true,
+		"table_name": true,
+		"action":     true,
+		"changed_at": true,
+	}
 )

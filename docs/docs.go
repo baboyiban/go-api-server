@@ -92,6 +92,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/change-notify": {
+            "get": {
+                "description": "change_notify 테이블의 모든 변경 이벤트를 반환합니다.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "change_notify"
+                ],
+                "summary": "변경 이벤트 목록 조회",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ChangeNotifyResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delivery-log": {
             "get": {
                 "description": "모든 배송 로그 정보를 반환합니다.",
@@ -1702,6 +1731,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.ChangeNotifyResponse": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "changed_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "table_name": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.CreateDeliveryLogRequest": {
             "type": "object",
             "required": [

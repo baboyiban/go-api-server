@@ -147,4 +147,9 @@ func registerRoutes(router *gin.Engine, db *gorm.DB) {
 	authHandler := handlers.NewAuthHandler(authService)
 	router.POST("/api/auth/login", authHandler.Login)
 	router.GET("/api/auth/me", authHandler.Me)
+
+	// change_notify
+	changeNotifyService := service.NewChangeNotifyService(db)
+	changeNotifyHandler := handlers.NewChangeNotifyHandler(changeNotifyService)
+	router.GET("/api/change-notify", changeNotifyHandler.ListChangeNotifies)
 }
