@@ -10,7 +10,7 @@ type CreateEmployeeRequest struct {
 
 type UpdateEmployeeRequest struct {
 	Password string `json:"password"`
-	Position string `json:"position" binding:"omitempty,oneof=관리직 운송직"`
+	Position string `json:"position" binding:"oneof=관리직 운송직"`
 	IsActive *bool  `json:"is_active"`
 }
 

@@ -20,7 +20,7 @@ type UpdateRegionRequest struct {
 	MaxCapacity     int     `json:"max_capacity"`
 	CurrentCapacity int     `json:"current_capacity"`
 	IsFull          bool    `json:"is_full"`
-	SaturatedAt     *string `json:"saturated_at,omitempty"`
+	SaturatedAt     *string `json:"saturated_at"`
 }
 
 type RegionResponse struct {
@@ -31,7 +31,7 @@ type RegionResponse struct {
 	MaxCapacity     int     `json:"max_capacity"`
 	CurrentCapacity int     `json:"current_capacity"`
 	IsFull          bool    `json:"is_full"`
-	SaturatedAt     *string `json:"saturated_at,omitempty"`
+	SaturatedAt     *string `json:"saturated_at"`
 }
 
 func ToRegionResponse(region *models.Region) RegionResponse {
